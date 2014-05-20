@@ -16,6 +16,11 @@ The requirements for BCCC are:
 
 * `HTTP` - Provides HTTP Fundation functions
 
+
+## Usage and Installation
+
+Install as a vendor using `composer.phar`.
+
 ## Setup for Developers
 
  - fork the repo
