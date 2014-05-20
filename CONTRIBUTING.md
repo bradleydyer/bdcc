@@ -69,7 +69,6 @@ Some things that will increase the chance that your pull request is accepted.
 
 * Use PSR Coding Standards and Style Guides
 
-    http://symfony.com/doc/current/contributing/code/standards.html  
     https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md  
     https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md  
     https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md
