@@ -24,7 +24,8 @@
         vi .git/hooks/post-merge
 
    Add following line:
-
+        
+        phpunit -d memory_limit=128M -c Tests/phpunit.xml .
         git branch --merged master | grep -v 'master$' | xargs git branch -d
         
    Save you changes: ESC, :wq
