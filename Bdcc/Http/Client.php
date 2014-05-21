@@ -2,6 +2,8 @@
 
 namespace Bdcc\Http;
 
+use Bdcc\Exception as BdccException;
+
 /**
  * Bdcc_Http_Client Class
  *
@@ -163,9 +165,9 @@ class Client
         $this->checksEnabled        = TRUE;
         $this->proxy                = FALSE;
         $this->proxyPort            = FALSE;
-        $this->followRedirects      = TRUE;
         $this->requestHeaders       = array();
 
+        $this->setFollowRedirects();
         $this->resetRequest();
     }
 
@@ -188,11 +190,13 @@ class Client
      * This method sets the connect time-out
      *
      * @param integer   $timeout        The number of seconds that the time-out should be set to
-     * @return NULL
+     * @return Client
      */
     public function setConnectTimeout($timeout)
     {
         $this->connectTimeout = $timeout;
+
+        return $this;
     }
 
     /**
@@ -308,7 +312,7 @@ class Client
      *
      * @return string
      */
-    public function getRequestUri($uri)
+    public function getRequestUri()
     {
         return $this->requestUri;
     }
@@ -407,6 +411,27 @@ class Client
     }
 
     /**
+     * Returns request credentials
+     *
+     * @return  string
+     */
+    public function getRequestCredentials()
+    {
+        return $this->requestCredentials;
+    }
+
+
+    /**
+     * Return request method
+     *
+     * @return  string          Name of the method used for the request
+     */
+    public function getRequestMethod()
+    {
+        return $this->requestMethod;
+    }
+
+    /**
      * This method sets the request method
      *
      * @param   string      $method     Sets the request method (GET, POST, PUT, DELETE)
@@ -440,6 +465,16 @@ class Client
         }
 
         return $this;
+    }
+
+    /**
+     * Gets request data
+     *
+     * @return  string      Request data
+     */
+    public function getRequestData()
+    {
+        return $this->requestData;
     }
 
     /**
@@ -515,6 +550,16 @@ class Client
         $this->maxMem = intval($bytes);
 
         return $this;
+    }
+
+    /**
+     * Returns memory limit
+     *
+     * @return  Client
+     */
+    public function getMemoryLimit()
+    {
+        return $this->maxMem;
     }
 
     /**
@@ -727,6 +772,27 @@ class Client
     }
 
     /**
+     * Sets option to follow redirects
+     *
+     * @param   boolean     $follow     Whether to follow redirects or not
+     * @return  Client
+     */
+    public function setFollowRedirects($follow = true)
+    {
+        $this->followRedirects = $follow;
+    }
+
+    /**
+     * Whether to follow redirects or not
+     *
+     * @return  boolean
+     */
+    public function isFollowRedirects()
+    {
+        return $this->followRedirects;
+    }
+
+    /**
      * This method creates and configures Curl ready to make the request
      *
      * @return Client
@@ -770,19 +836,19 @@ class Client
         curl_setopt($this->ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0 );
 
         // Set follow HTTP redirection option.
-        curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, $this->followRedirects );
+        curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, $this->isFollowRedirects());
 
         // Register callback function for response headers
         curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, array( $this , 'responseHeaderCallback'));
 
         // If credentials specified, set plain HTTP auth
         if ($this->requestCredentials){
-            curl_setopt($this->ch, CURLOPT_USERPWD, $this->requestCredentials);
+            curl_setopt($this->ch, CURLOPT_USERPWD, $this->getRequestCredentials());
         }
 
         // If POST data has been supplied, set request data
         if ($this->requestData){
-            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $this->requestData);
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $this->getRequestData());
         }
 
         // Set headers for request
