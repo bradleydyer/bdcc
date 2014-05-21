@@ -11,7 +11,7 @@
         "php": ">=5.3.3"
     },
     "autoload": {
-        "psr-0": { "BradleyDyer\\BDCC": "" }
+        "psr-0": { "Bdcc": "/bradleydyer/BDCC/BradleyDyer/BDCC" }
     },
     "target-dir": "BradleyDyer/BDCC"
 }
