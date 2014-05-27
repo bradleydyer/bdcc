@@ -53,7 +53,7 @@ class Client
      */
     public function setBaseUrl($url)
     {
-        $this->url = $url;
+        $this->baseUrl = $url;
 
         return $this;
     }
@@ -65,7 +65,7 @@ class Client
      */
     public function getBaseUrl()
     {
-        return $this->url;
+        return $this->baseUrl;
     }
 
     /**
@@ -88,16 +88,17 @@ class Client
         $this->client
             ->setRequestUri($this->getBaseUrl() . $route)
             ->setRequestData($data)
-            ->setRequestMethod($method);
+            ->setRequestMethod($method)
+            ->sendRequest();
 
         // Send request
         if ($this->getClient()) {
             // Check we have got response back
             if ($this->getClient()->isResponseComplete()) {
                 // Check for client and server side errors
-                $httpCode = $this->getClient->getResponseCode();
+                $httpCode = $this->getClient()->getResponseCode();
 
-                if ($httpCode == Bdcc_Status::isServerError() && $httpCode == Bdcc_Status::isClientError()) {
+                if (Bdcc_Status::isServerError($httpCode) || Bdcc_Status::isClientError($httpCode)) {
                     // Parse errors
                     try {
                         $error = json_decode($this->getClient()->getResponseHandle());
@@ -109,9 +110,8 @@ class Client
                     throw new Icc_Exception($error->message, $httpCode);
                 } else {
                     // Parse respose
-                    if (
-                        $this->getClient()->getResponseHeader('content-type') == 'application/json' ||
-                        $this->getClient()->getResponseHeader('content-type') == 'text/json'
+                    if ($this->getClient()->getResponseHeader('content-type') == 'application/json'
+                        || $this->getClient()->getResponseHeader('content-type') == 'text/json'
                         ) {
 
                         // Try to decode json

@@ -154,8 +154,8 @@ Class Status
      */
     public static function getStatusLabel($statusCode)
     {
-        if (isset($this->statusLabels[$statusCode])) {
-            return $this->statusLabels[$statusCode];
+        if (isset(self::$statusLabels[$statusCode])) {
+            return self::$statusLabels[$statusCode];
         }
     }
 
@@ -167,7 +167,7 @@ Class Status
      */
     public static function isInformational($statusCode)
     {
-        if ($statusCode >= 100 && < 200) {
+        if ($statusCode >= self::HTTP_CONTINUE && $statusCode < self::HTTP_OK) {
             return true;
         }
 
@@ -182,7 +182,7 @@ Class Status
      */
     public static function isSuccess($statusCode)
     {
-        if ($statusCode >= 200 && < 300) {
+        if ($statusCode >= self::HTTP_OK && $statusCode < self::HTTP_MULTIPLE_CHOICES) {
             return true;
         }
 
@@ -197,7 +197,7 @@ Class Status
      */
     public static function isRedirection($statusCode)
     {
-        if ($statusCode >= 300 && < 400) {
+        if ($statusCode >= self::HTTP_MULTIPLE_CHOICES && $statusCode < self::HTTP_BAD_REQUEST) {
             return true;
         }
 
@@ -212,7 +212,7 @@ Class Status
      */
     public static function isClientError($statusCode)
     {
-        if ($statusCode >= 400 && < 500) {
+        if ($statusCode >= self::HTTP_BAD_REQUEST && $statusCode < self::HTTP_INTERNAL_SERVER_ERROR) {
             return true;
         }
 
@@ -227,7 +227,7 @@ Class Status
      */
     public static function isServerError($statusCode)
     {
-        if ($statusCode >= 500 && < 600) {
+        if ($statusCode >= self::HTTP_INTERNAL_SERVER_ERROR) {
             return true;
         }
 

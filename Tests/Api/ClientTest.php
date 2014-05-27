@@ -9,6 +9,7 @@ use Bdcc\Api\Client;
  * Test class for Bdcc_Http_Client
  *
  * @author Kris Rybak <kris.rybak@bradleydyer.com>
+ * @group Bdcc_Api
  */
 class ClientTest extends TestCase
 {
