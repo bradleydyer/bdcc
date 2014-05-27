@@ -2,7 +2,8 @@
 
 namespace Bdcc\Api;
 
-use Bdcc\Exception as BdccException;
+use Bdcc\Exception as Bdcc_Exception;
+use Bdcc\Status as Bdcc_Status;
 use Bdcc\Http\Client as Bdcc_Http_Client;
 
 /**
@@ -78,8 +79,56 @@ class Client
     /**
      * Send request
      */
-    public function sendRequest()
+    public function sendRequest($route, $data, $method = 'GET')
     {
+        $ret = false;
 
+        // Set up the route, data and HTTP method
+
+        $this->client
+            ->setRequestUri($this->getBaseUrl() . $route)
+            ->setRequestData($data)
+            ->setRequestMethod($method);
+
+        // Send request
+        if ($this->getClient()) {
+            // Check we have got response back
+            if ($this->getClient()->isResponseComplete()) {
+                // Check for client and server side errors
+                $httpCode = $this->getClient->getResponseCode();
+
+                if ($httpCode == Bdcc_Status::isServerError() && $httpCode == Bdcc_Status::isClientError()) {
+                    // Parse errors
+                    try {
+                        $error = json_decode($this->getClient()->getResponseHandle());
+                    } catch (Exception $e) {
+                        throw new Bdcc_Exception("Could not parse respose error");
+                    }
+
+                    // Throw exception with error message
+                    throw new Icc_Exception($error->message, $httpCode);
+                } else {
+                    // Parse respose
+                    if (
+                        $this->getClient()->getResponseHeader('content-type') == 'application/json' ||
+                        $this->getClient()->getResponseHeader('content-type') == 'text/json'
+                        ) {
+
+                        // Try to decode json
+                        try {
+                            $ret = json_decode($this->getClient()->getResponseHandle());
+                        } catch (Exception $e) {
+                            throw new Bdcc_Exception("Could not parse respose");
+                        }
+                    }
+                }
+            } else {
+                throw new Bdcc_Exception("Incomplete API response");
+            }
+        } else {
+            throw new Bdcc_Exception($this->getClient()->getError());
+        }
+
+        return $ret;
     }
 }
