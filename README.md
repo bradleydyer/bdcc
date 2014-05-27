@@ -16,7 +16,7 @@ The requirements for BCCC are:
 
 * `Api`     - Provides Api access methods and helpers
 * `HTTP`    - Provides HTTP Fundation functions
-* `(Root)`  - Top level Classes
+* `Bdcc Status`(https://github.com/bradleydyer/BDCC/blob/master/docs/bdcc_status.md)
 
 ## Usage and Installation
 
