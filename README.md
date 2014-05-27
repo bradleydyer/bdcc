@@ -14,8 +14,9 @@ The requirements for BCCC are:
 
 ## Categories
 
-* `HTTP` - Provides HTTP Fundation functions
-
+* `Api`     - Provides Api access methods and helpers
+* `HTTP`    - Provides HTTP Fundation functions
+* `(Root)`  - Top level Classes
 
 ## Usage and Installation
 
