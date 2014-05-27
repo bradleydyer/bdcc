@@ -26,7 +26,7 @@ Preferably use PSR-0 compatible notation in order to make sure class with simila
     elseif ($response != Bdcc_Status::HTTP_INTERNAL_SERVER_ERROR) {
         ...
     }
-``
+``''
 
 3) Use Bdcc_Status to get response label
 
@@ -48,6 +48,13 @@ Preferably use PSR-0 compatible notation in order to make sure class with simila
 
     // Now check if any Success status have been returned
     if (Bdcc_Status::isSuccess($responseCode)) {
+        ...
+    }
+
+    // Now check for any error status have been returned
+    // Client Errors: 4xx
+    // Server Errors: 5xx
+    elseif (Bdcc_Status::isClientError($responseCode) || Bdcc_Status::isServerError($responseCode)) {
         ...
     }
 ```
