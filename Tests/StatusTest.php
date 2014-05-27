@@ -9,6 +9,7 @@ use Bdcc\Status as Bdcc_Status;
  * Test class for Bdcc_Http_Client
  *
  * @author Kris Rybak <kris.rybak@bradleydyer.com>
+ * @group Bdcc
  */
 class StatusTest extends TestCase
 {
