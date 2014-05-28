@@ -113,13 +113,14 @@ class Client
                     if ($this->getClient()->getResponseHeader('content-type') == 'application/json'
                         || $this->getClient()->getResponseHeader('content-type') == 'text/json'
                         ) {
-
                         // Try to decode json
                         try {
                             $ret = json_decode($this->getClient()->getResponseHandle());
                         } catch (Exception $e) {
                             throw new Bdcc_Exception("Could not parse respose");
                         }
+                    } else {
+                        $ret = $this->getClient()->getResponseHandle();
                     }
                 }
             } else {
