@@ -300,7 +300,7 @@ class Client
      * @param   string      $uri        Contains the request URI
      * @return  Client
      */
-    public function setRequestUri($uri = null)
+    public function setRequestUri($uri = '')
     {
         $this->requestUri = $uri;
 
@@ -537,6 +537,8 @@ class Client
             ->setRequestData()
             ->resetRequestCredentials()
             ->resetRequestHeaders();
+
+        return $this;
     }
 
     /**

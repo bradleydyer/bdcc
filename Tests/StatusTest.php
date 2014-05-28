@@ -72,6 +72,8 @@ class StatusTest extends TestCase
     {
         foreach (Bdcc_Status::$statusLabels as $statusCode => $label) {
             $this->assertSame($label, Bdcc_Status::getStatusLabel($statusCode));
+            // Make sure label is a string
+            $this->assertTrue(is_string(Bdcc_Status::getStatusLabel($statusCode)));
         }
     }
 
@@ -81,6 +83,8 @@ class StatusTest extends TestCase
     public function testIsInformational($statusCode)
     {
         $this->assertTrue(Bdcc_Status::isInformational($statusCode));
+        // Make sure return value is boolean
+        $this->assertTrue(is_bool(Bdcc_Status::isInformational($statusCode)));
     }
 
     /**
@@ -89,6 +93,8 @@ class StatusTest extends TestCase
     public function testIsNotInformational($statusCode)
     {
         $this->assertFalse(Bdcc_Status::isInformational($statusCode));
+        // Make sure return value is boolean
+        $this->assertTrue(is_bool(Bdcc_Status::isInformational($statusCode)));
     }
 
     /**
@@ -97,6 +103,8 @@ class StatusTest extends TestCase
     public function testIsSuccess($statusCode)
     {
         $this->assertTrue(Bdcc_Status::isSuccess($statusCode));
+        // Make sure return value is boolean
+        $this->assertTrue(is_bool(Bdcc_Status::isSuccess($statusCode)));
     }
 
     /**
@@ -105,6 +113,8 @@ class StatusTest extends TestCase
     public function testIsNotSuccess($statusCode)
     {
         $this->assertFalse(Bdcc_Status::isSuccess($statusCode));
+        // Make sure return value is boolean
+        $this->assertTrue(is_bool(Bdcc_Status::isSuccess($statusCode)));
     }
 
     /**
@@ -113,6 +123,8 @@ class StatusTest extends TestCase
     public function testIsRedirection($statusCode)
     {
         $this->assertTrue(Bdcc_Status::isRedirection($statusCode));
+        // Make sure return value is boolean
+        $this->assertTrue(is_bool(Bdcc_Status::isRedirection($statusCode)));
     }
 
     /**
@@ -121,6 +133,8 @@ class StatusTest extends TestCase
     public function testIsNotRedirection($statusCode)
     {
         $this->assertFalse(Bdcc_Status::isRedirection($statusCode));
+        // Make sure return value is boolean
+        $this->assertTrue(is_bool(Bdcc_Status::isRedirection($statusCode)));
     }
 
     /**
@@ -129,6 +143,8 @@ class StatusTest extends TestCase
     public function testIsClientError($statusCode)
     {
         $this->assertTrue(Bdcc_Status::isClientError($statusCode));
+        // Make sure return value is boolean
+        $this->assertTrue(is_bool(Bdcc_Status::isClientError($statusCode)));
     }
 
     /**
@@ -137,6 +153,8 @@ class StatusTest extends TestCase
     public function testIsNotClientError($statusCode)
     {
         $this->assertFalse(Bdcc_Status::isClientError($statusCode));
+        // Make sure return value is boolean
+        $this->assertTrue(is_bool(Bdcc_Status::isClientError($statusCode)));
     }
 
     /**
@@ -145,6 +163,8 @@ class StatusTest extends TestCase
     public function testIsServerError($statusCode)
     {
         $this->assertTrue(Bdcc_Status::isServerError($statusCode));
+        // Make sure return value is boolean
+        $this->assertTrue(is_bool(Bdcc_Status::isServerError($statusCode)));
     }
 
     /**
@@ -153,5 +173,7 @@ class StatusTest extends TestCase
     public function testIsNotServerError($statusCode)
     {
         $this->assertFalse(Bdcc_Status::isServerError($statusCode));
+        // Make sure return value is boolean
+        $this->assertTrue(is_bool(Bdcc_Status::isServerError($statusCode)));
     }
 }
