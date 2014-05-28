@@ -78,40 +78,39 @@ class ClientTest extends TestCase
         $this->assertEquals(30, $client->getRequestTimeout());
     }
 
-    public function testMetaData()
-    {
-        $client = new Client;
-
-        $metaData = array(
-            'content_type' => 'text/html',
-            'content_length' => 1024
-        );
-
-        $client->setMetaData($metaData);
-        $this->assertEquals($metaData, $client->getMetaData());
-    }
-
     public function testRequestMethods()
     {
         $client = new Client;
-        $client->setRequestMethod();
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setRequestMethod());
         $this->assertEquals('GET', $client->getRequestMethod());
 
-        $client->setRequestMethod('HEAD');
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setRequestMethod('HEAD'));
         $this->assertEquals('HEAD', $client->getRequestMethod());
 
         $data = array('foo' => 'bar');
 
-        $client->setPostRequestData($data);
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setPostRequestData($data));
         $this->assertEquals('POST', $client->getRequestMethod());
 
-        $client->setPutRequestData($data);
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setPutRequestData($data));
         $this->assertEquals('PUT', $client->getRequestMethod());
 
-        $client->setDeleteRequestData($data);
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setDeleteRequestData($data));
         $this->assertEquals('DELETE', $client->getRequestMethod());
 
         $this->assertEquals(http_build_query($data), $client->getRequestData());
+
+        // Test reset request
+        $headers = array(
+            'User-Agent'    => 'Bdcc HTTP Client'
+        );
+
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->resetRequest());
+        $this->assertTrue(is_string($client->getRequestUri()));
+        $this->assertEmpty($client->getRequestUri());
+        $this->assertEquals('GET', $client->getRequestMethod());
+        $this->assertEmpty($client->getRequestData());
+        $this->assertEquals($headers, $client->getRequestHeaders());
     }
 
     /**
@@ -120,14 +119,14 @@ class ClientTest extends TestCase
     public function testSetUnsupportedMethod()
     {
         $client = new Client;
-        $client->setRequestMethod('TRACE');
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setRequestMethod('TRACE'));
         $this->setExpectedException('Bdcc\Exception');
     }
 
     public function testMemoryLimits()
     {
         $client = new Client;
-        $client->setMemoryLimit(1024);
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setMemoryLimit(1024));
         $this->assertEquals(1024, $client->getMemoryLimit());
     }
 
@@ -151,10 +150,95 @@ class ClientTest extends TestCase
         $userName   = 'user';
         $password   = 'pass';
 
-        $client->setRequestCredentials($userName, $password);
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setRequestCredentials($userName, $password));
         $this->assertEquals($userName . ':' .$password, $client->getRequestCredentials());
         $this->assertEquals($userName . ':' .$password, $client->getRequestCredentials());
         $this->assertNull($client->getCurlHandle());
         $this->assertFalse($client->sendRequest());
+    }
+
+    public function testConnectTimeout()
+    {
+        $timeout = 10;
+
+        $client = new Client();
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setConnectTimeout($timeout));
+        $this->assertTrue(is_int($client->getConnectTimeout()));
+        $this->assertEquals($timeout, $client->getConnectTimeout());
+    }
+
+    public function testReadTimeout()
+    {
+        $timeout = 10;
+
+        $client = new Client();
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setReadTimeout($timeout));
+        $this->assertTrue(is_int($client->getReadTimeout()));
+        $this->assertEquals($timeout, $client->getReadTimeout());
+    }
+
+    public function testRequestTimeout()
+    {
+        $timeout = 10;
+
+        $client = new Client();
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setRequestTimeout($timeout));
+        $this->assertTrue(is_int($client->getRequestTimeout()));
+        $this->assertEquals($timeout, $client->getRequestTimeout());
+    }
+
+    public function testMetaData()
+    {
+        $metaData = array(
+            'content-length'    => 10,
+            'content-type'      => 'text/html'
+        );
+
+        $client = new Client();
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setMetaData($metaData));
+        $this->assertTrue(is_array($client->getMetaData()));
+        $this->assertEquals($metaData, $client->getMetaData());
+
+        // Check all the meta data has been set
+        foreach (array_keys($metaData) as $key) {
+            $this->assertArrayHasKey($key, $client->getMetaData());
+        }
+    }
+
+    public function testRequestUri()
+    {
+        $uri = 'example.com';
+
+        $client = new Client();
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setRequestUri($uri));
+        $this->assertTrue(is_string($client->getRequestUri()));
+        $this->assertEquals($uri, $client->getRequestUri());
+
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setRequestUri());
+        $this->assertTrue(is_string($client->getRequestUri()));
+    }
+
+    public function testRequestHeaders()
+    {
+        $headers = array(
+            'Accept'        => 'application/json',
+            'User-Agent'    => 'Bdcc HTTP Client'
+        );
+
+        $client = new Client();
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setRequestHeaders($headers));
+        $this->assertTrue(is_array($client->getRequestHeaders()));
+        $this->assertEquals($headers, $client->getRequestHeaders());
+
+        // Check all the meta data has been set
+        foreach (array_keys($headers) as $key) {
+            $this->assertArrayHasKey($key, $client->getRequestHeaders());
+        }
+
+        // Reset request header
+        $expected = array('User-Agent' => 'Bdcc HTTP Client');
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->resetRequestHeaders());
+        $this->assertTrue(is_array($client->getRequestHeaders()));
+        $this->assertEquals($expected, $client->getRequestHeaders());
     }
 }
