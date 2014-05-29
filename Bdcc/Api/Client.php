@@ -215,13 +215,23 @@ class Client
                     $parsers        = $this->getParsers();
                     // Get content type
                     $contentType    = $this->getHttpClient()->getResponseHeader('content-type');
-
+                    $data           = fgets($this->getHttpClient()->getResponseHandle());
                     // Try to match content type to available parser
-                    if (in_array($contentType, $parsers)) {
+                    if (array_key_exists($contentType, $parsers)) {
                         if (class_exists($parsers[$contentType]['parser'])) {
-                            $ret = call_user_func_array(array($parsers[$contentType]['parser'],'parse'));
+                            $ret = call_user_func_array(array($parsers[$contentType]['parser'],'parse'), array($data));
+
+                            // Save data locally
+                            $this->setData($ret);
+                        } else {
+                            // Save data locally
+                            $this->setData($ret);
+                            // save response data
+                            $ret = $this->getHttpClient()->getResponseHandle();
                         }
                     } else {
+                        // Save data locally
+                        $this->setData($ret);
                         // save response data
                         $ret = $this->getHttpClient()->getResponseHandle();
                     }
