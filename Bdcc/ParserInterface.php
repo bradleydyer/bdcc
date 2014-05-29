@@ -7,7 +7,7 @@ use Bdcc\Exception as Bdcc_Exception;
 /**
  * Interface implemented by a parser
  *
- * @author kris Rybak <kris.rybak@bradleydyer.com>
+ * @author Kris Rybak <kris.rybak@bradleydyer.com>
  */
 interface ParserInterface
 {
