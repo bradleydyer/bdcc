@@ -17,7 +17,7 @@ class Client
     /**
      * @var Bdcc\Http\Client
      */
-    private $client;
+    private $httpClient;
 
     /**
      * @var string
@@ -25,25 +25,35 @@ class Client
     private $baseUrl;
 
     /**
+     * @var mixed
+     */
+    private $data;
+
+    /**
+     * @var array
+     */
+    private $parsers;
+
+    /**
      * Sets Client
      *
-     * @param   Client  $client     Http Client to use
+     * @param   Client  $httpClient Http Client to use
      */
-    public function setClient(Bdcc_Http_Client $client)
+    public function setHttpClient(Bdcc_Http_Client $httpClient)
     {
-        $this->client = $client;
+        $this->httpClient = $httpClient;
 
         return $this;
     }
 
     /**
-     * Gets client
+     * Gets httpClient
      *
      * @return Bdcc\Http\Client
      */
-    public function getClient()
+    public function getHttpClient()
     {
-        return $this->client;
+        return $this->httpClient;
     }
 
     /**
@@ -69,11 +79,71 @@ class Client
     }
 
     /**
+     * Sets data
+     *
+     * @param   mixed  $data       Sets data returned by the client
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * Gets data
+     *
+     * @return  mixed
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Sets parsers
+     *
+     * @param   array  $parsers     Array of parsers to use for given response type
+     */
+    public function setParsers(array $parsers)
+    {
+        foreach ($parsers as $contentType => $parserName) {
+            $this->addParser($contentType, $parserName);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets parsers
+     *
+     * @return  array
+     */
+    public function getParsers()
+    {
+        return $this->parsers;
+    }
+
+    /**
+     * Add parser
+     *
+     * @param   string  $contentType    Content type to use the parser for
+     * @param   string  $parserName     Name of the parser to use
+     */
+    public function addParser($contentType, $parserName)
+    {
+        $this->parsers[$contentType] = $parserName;
+
+        return $this;
+    }
+
+    /**
      * Constructor
      */
     public function __construct()
     {
-        $this->setClient(new Bdcc_Http_Client());
+        $this->setHttpClient(new Bdcc_Http_Client());
+        $this->parsers = array();
     }
 
     /**
@@ -85,23 +155,24 @@ class Client
 
         // Set up the route, data and HTTP method
 
-        $this->client
-            ->setRequestUri($this->getBaseUrl() . $route)
-            ->setRequestData($data)
-            ->setRequestMethod($method)
-            ->sendRequest();
+        $this
+            ->getHttpClient()
+                ->setRequestUri($this->getBaseUrl() . $route)
+                ->setRequestData($data)
+                ->setRequestMethod($method)
+                ->sendRequest();
 
         // Send request
-        if ($this->getClient()) {
+        if ($this->getHttpClient()) {
             // Check we have got response back
-            if ($this->getClient()->isResponseComplete()) {
-                // Check for client and server side errors
-                $httpCode = $this->getClient()->getResponseCode();
+            if ($this->getHttpClient()->isResponseComplete()) {
+                // Check for httpClient and server side errors
+                $httpCode = $this->getHttpClient()->getResponseCode();
 
                 if (Bdcc_Status::isServerError($httpCode) || Bdcc_Status::isClientError($httpCode)) {
                     // Parse errors
                     try {
-                        $error = json_decode($this->getClient()->getResponseHandle());
+                        $error = json_decode($this->getHttpClient()->getResponseHandle());
                     } catch (Exception $e) {
                         throw new Bdcc_Exception("Could not parse respose error");
                     }
@@ -110,24 +181,25 @@ class Client
                     throw new Icc_Exception($error->message, $httpCode);
                 } else {
                     // Parse respose
-                    if ($this->getClient()->getResponseHeader('content-type') == 'application/json'
-                        || $this->getClient()->getResponseHeader('content-type') == 'text/json'
+                    if ($this->getHttpClient()->getResponseHeader('content-type') == 'application/json'
+                        || $this->getHttpClient()->getResponseHeader('content-type') == 'text/json'
                         ) {
                         // Try to decode json
                         try {
-                            $ret = json_decode($this->getClient()->getResponseHandle());
+                            $ret = json_decode($this->getHttpClient()->getResponseHandle());
                         } catch (Exception $e) {
                             throw new Bdcc_Exception("Could not parse respose");
                         }
                     } else {
-                        $ret = $this->getClient()->getResponseHandle();
+                        // save response data
+                        $ret = $this->getHttpClient()->getResponseHandle();
                     }
                 }
             } else {
                 throw new Bdcc_Exception("Incomplete API response");
             }
         } else {
-            throw new Bdcc_Exception($this->getClient()->getError());
+            throw new Bdcc_Exception($this->getHttpClient()->getError());
         }
 
         return $ret;

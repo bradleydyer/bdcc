@@ -23,7 +23,7 @@ class ClientTest extends TestCase
     {
         $client = new Client();
 
-        $this->assertInstanceOf('Bdcc\Http\Client', $client->getClient());
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->getHttpClient());
     }
 
     public function testClientBaseUrl()
