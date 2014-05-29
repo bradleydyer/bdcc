@@ -102,13 +102,14 @@ class Client
 
     /**
      * Sets parsers
+     * THIS WILL OVERWRITE ANY DEFAULT OR EXISTING PARSERS WITH FOR A GIVEN CONTENT TYPE
      *
      * @param   array  $parsers     Array of parsers to use for given response type
      */
     public function setParsers(array $parsers)
     {
-        foreach ($parsers as $contentType => $parserName) {
-            $this->addParser($contentType, $parserName);
+        foreach ($parsers as $contentType => $parser) {
+            $this->addParser($contentType, $parser);
         }
 
         return $this;
@@ -128,11 +129,27 @@ class Client
      * Add parser
      *
      * @param   string  $contentType    Content type to use the parser for
-     * @param   string  $parserName     Name of the parser to use
+     * @param   array   $parser         Parser to use
      */
-    public function addParser($contentType, $parserName)
+    public function addParser($contentType, $parser)
     {
-        $this->parsers[$contentType] = $parserName;
+        $this->parsers[$contentType] = $parser;
+
+        return $this;
+    }
+
+    /**
+     * Removes parser
+     *
+     * @param   string  $contentType    Content type to use the parser for
+     */
+    public function removeParser($contentType)
+    {
+        $parsers = $this->getParsers();
+
+        if (in_array($contentType, $parsers)) {
+            unset($parsers[$contentType]);
+        }
 
         return $this;
     }
@@ -143,7 +160,20 @@ class Client
     public function __construct()
     {
         $this->setHttpClient(new Bdcc_Http_Client());
-        $this->parsers = array();
+        $this->setDefaultParsers();
+    }
+
+    /**
+     * Sets default parsers
+     */
+    protected function setDefaultParsers()
+    {
+        $knownParsersers = array(
+            'application/json'  => array('parser' => 'Bdcc\\Json\\Parser'),
+            'text/json'         => array('parser' => 'Bdcc\\Json\\Parser'),
+        );
+
+        $this->parsers = $knownParsersers;
     }
 
     /**
@@ -174,21 +204,22 @@ class Client
                     try {
                         $error = json_decode($this->getHttpClient()->getResponseHandle());
                     } catch (Exception $e) {
-                        throw new Bdcc_Exception("Could not parse respose error");
+                        throw new Bdcc_Exception("Could not parse response error");
                     }
 
                     // Throw exception with error message
                     throw new Icc_Exception($error->message, $httpCode);
                 } else {
-                    // Parse respose
-                    if ($this->getHttpClient()->getResponseHeader('content-type') == 'application/json'
-                        || $this->getHttpClient()->getResponseHeader('content-type') == 'text/json'
-                        ) {
-                        // Try to decode json
-                        try {
-                            $ret = json_decode($this->getHttpClient()->getResponseHandle());
-                        } catch (Exception $e) {
-                            throw new Bdcc_Exception("Could not parse respose");
+                    // Parse response
+                    // Get list of available parsers
+                    $parsers        = $this->getParsers();
+                    // Get content type
+                    $contentType    = $this->getHttpClient()->getResponseHeader('content-type');
+
+                    // Try to match content type to available parser
+                    if (in_array($contentType, $parsers)) {
+                        if (class_exists($parsers[$contentType]['parser'])) {
+                            $ret = call_user_func_array(array($parsers[$contentType]['parser'],'parse'));
                         }
                     } else {
                         // save response data
