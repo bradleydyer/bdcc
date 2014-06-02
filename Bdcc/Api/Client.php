@@ -238,23 +238,15 @@ class Client
                             }
 
                             throw new Bdcc_Exception($message, $httpCode);
-                        } else {
-                            // Save data locally
-                            $this->setData($ret);
                         }
                     } else {
                         // save response data
                         $ret = $this->getHttpClient()->getResponseHandle();
-                        // Save data locally
-                        $this->setData($ret);
                     }
                 } else {
-                    // Save data locally
-                    $this->setData($ret);
                     // save response data
                     $ret = $this->getHttpClient()->getResponseHandle();
                 }
-
             } else {
                 throw new Bdcc_Exception("Incomplete API response");
             }
