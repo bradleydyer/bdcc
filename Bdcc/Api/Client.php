@@ -196,46 +196,48 @@ class Client
         if ($this->getHttpClient()) {
             // Check we have got response back
             if ($this->getHttpClient()->isResponseComplete()) {
+
                 // Check for httpClient and server side errors
                 $httpCode = $this->getHttpClient()->getResponseCode();
 
-                if (Bdcc_Status::isServerError($httpCode) || Bdcc_Status::isClientError($httpCode)) {
-                    // Parse errors
-                    try {
-                        $error = json_decode($this->getHttpClient()->getResponseHandle());
-                    } catch (Exception $e) {
-                        throw new Bdcc_Exception("Could not parse response error");
-                    }
+                // Parse response
+                // Get list of available parsers
+                $parsers        = $this->getParsers();
+                // Get content type
+                $contentType    = $this->getHttpClient()->getResponseHeader('content-type');
+                $data           = fgets($this->getHttpClient()->getResponseHandle());
+                // Try to match content type to available parser
+                if (array_key_exists($contentType, $parsers)) {
+                    if (class_exists($parsers[$contentType]['parser'])) {
+                        $ret = call_user_func_array(array($parsers[$contentType]['parser'],'parse'), array($data));
 
-                    // Throw exception with error message
-                    throw new Icc_Exception($error->message, $httpCode);
-                } else {
-                    // Parse response
-                    // Get list of available parsers
-                    $parsers        = $this->getParsers();
-                    // Get content type
-                    $contentType    = $this->getHttpClient()->getResponseHeader('content-type');
-                    $data           = fgets($this->getHttpClient()->getResponseHandle());
-                    // Try to match content type to available parser
-                    if (array_key_exists($contentType, $parsers)) {
-                        if (class_exists($parsers[$contentType]['parser'])) {
-                            $ret = call_user_func_array(array($parsers[$contentType]['parser'],'parse'), array($data));
+                        if (Bdcc_Status::isServerError($httpCode) || Bdcc_Status::isClientError($httpCode)) {
+                            $error = $ret;
+                            // Find error message
+                            if (isset($error->Message)) {
+                                $message = $error->Message;
+                            } else {
+                                $message = $error->message;
+                            }
 
-                            // Save data locally
-                            $this->setData($ret);
+                            throw new Bdcc_Exception($message, $httpCode);
                         } else {
                             // Save data locally
                             $this->setData($ret);
-                            // save response data
-                            $ret = $this->getHttpClient()->getResponseHandle();
                         }
                     } else {
-                        // Save data locally
-                        $this->setData($ret);
                         // save response data
                         $ret = $this->getHttpClient()->getResponseHandle();
+                        // Save data locally
+                        $this->setData($ret);
                     }
+                } else {
+                    // Save data locally
+                    $this->setData($ret);
+                    // save response data
+                    $ret = $this->getHttpClient()->getResponseHandle();
                 }
+
             } else {
                 throw new Bdcc_Exception("Incomplete API response");
             }
