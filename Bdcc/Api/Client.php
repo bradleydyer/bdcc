@@ -25,7 +25,7 @@ class Client
     private $baseUrl;
 
     /**
-     * @var mixed
+     * @var array
      */
     private $data;
 
@@ -81,11 +81,13 @@ class Client
     /**
      * Sets data
      *
-     * @param   mixed  $data       Sets data returned by the client
+     * @param   array  $data       Sets data returned by the client
      */
-    public function setData($data)
+    public function setData(array $data)
     {
-        $this->data = $data;
+        foreach($data as $key => $value) {
+            $this->addData($key, $value);
+        }
 
         return $this;
     }
@@ -93,11 +95,27 @@ class Client
     /**
      * Gets data
      *
-     * @return  mixed
+     * @return  array
      */
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * Adds data
+     *
+     * @param   string  $key         Sets new data entry key. IMPORTANT existing key will be overwritten
+     * @param   string  $value       Sets new data entry value.
+     * @return  Client
+     */
+    public function addData($key, $value)
+    {
+        if(is_array($this->getData())) {
+            $this->data[$key] = $value;
+        }
+
+        return $this;
     }
 
     /**
@@ -145,10 +163,8 @@ class Client
      */
     public function removeParser($contentType)
     {
-        $parsers = $this->getParsers();
-
-        if (in_array($contentType, $parsers)) {
-            unset($parsers[$contentType]);
+        if (array_key_exists($contentType, $this->parsers)) {
+            unset($this->parsers[$contentType]);
         }
 
         return $this;
@@ -161,6 +177,7 @@ class Client
     {
         $this->setHttpClient(new Bdcc_Http_Client());
         $this->setDefaultParsers();
+        $this->data = array();
     }
 
     /**
