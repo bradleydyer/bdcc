@@ -27,7 +27,12 @@ class Client
     /**
      * @var array
      */
-    private $data;
+    private $requestData;
+
+    /**
+     * @var mixed
+     */
+    private $responseData;
 
     /**
      * @var array
@@ -57,6 +62,28 @@ class Client
     }
 
     /**
+     * Sets response data
+     *
+     * @param   mixed  $data    Set response data
+     */
+    public function setResponseData($data)
+    {
+        $this->responseData = $data;
+
+        return $this;
+    }
+
+    /**
+     * Gets response data
+     *
+     * @return  mixed
+     */
+    public function getResponseData()
+    {
+        return $this->responseData;
+    }
+
+    /**
      * Sets base url
      *
      * @param   string  $baseUrl    Base url to use with api call
@@ -79,40 +106,40 @@ class Client
     }
 
     /**
-     * Sets data
+     * Sets request data
      *
-     * @param   array  $data       Sets data returned by the client
+     * @param   array  $data       Sets data sent by the client
      */
-    public function setData(array $data)
+    public function setRequestData(array $data)
     {
         foreach($data as $key => $value) {
-            $this->addData($key, $value);
+            $this->addRequestData($key, $value);
         }
 
         return $this;
     }
 
     /**
-     * Gets data
+     * Gets request data
      *
      * @return  array
      */
-    public function getData()
+    public function getRequestData()
     {
-        return $this->data;
+        return $this->requestData;
     }
 
     /**
-     * Adds data
+     * Adds request data
      *
      * @param   string  $key         Sets new data entry key. IMPORTANT existing key will be overwritten
      * @param   string  $value       Sets new data entry value.
      * @return  Client
      */
-    public function addData($key, $value)
+    public function addRequestData($key, $value)
     {
-        if(is_array($this->getData())) {
-            $this->data[$key] = $value;
+        if(is_array($this->getRequestData())) {
+            $this->requestData[$key] = $value;
         }
 
         return $this;
@@ -177,7 +204,7 @@ class Client
     {
         $this->setHttpClient(new Bdcc_Http_Client());
         $this->setDefaultParsers();
-        $this->data = array();
+        $this->requestData = array();
     }
 
     /**
@@ -203,9 +230,10 @@ class Client
         // Set up the route, data and HTTP method
 
         $this
+            ->setRequestData($data)
             ->getHttpClient()
                 ->setRequestUri($this->getBaseUrl() . $route)
-                ->setRequestData($data)
+                ->setRequestData($this->getRequestData())
                 ->setRequestMethod($method)
                 ->sendRequest();
 
@@ -253,6 +281,9 @@ class Client
         } else {
             throw new Bdcc_Exception($this->getHttpClient()->getError());
         }
+
+        //Save data locally
+        $this->setResponseData($ret);
 
         return $ret;
     }

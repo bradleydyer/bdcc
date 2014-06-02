@@ -37,15 +37,15 @@ class ClientTest extends TestCase
         $this->assertSame($baseUrl, $client->getBaseUrl());
     }
 
-    public function testSetData() {
+    public function testSetRequestData() {
         $client = new Client();
         $expected = array(
             'username' => 'unknown',
             'password' => 'test',
         );
 
-        $this->assertInstanceOf('Bdcc\Api\Client', $client->setData($expected));
-        $this->assertEquals($expected, $client->getData());
+        $this->assertInstanceOf('Bdcc\Api\Client', $client->setRequestData($expected));
+        $this->assertEquals($expected, $client->getRequestData());
     }
 
     public function testSetParsers() {
