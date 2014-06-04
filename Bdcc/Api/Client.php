@@ -223,7 +223,7 @@ class Client
     /**
      * Send request
      */
-    public function sendRequest($route, $data, $method = 'GET')
+    public function sendRequest($route, array $data = array(), $method = 'GET')
     {
         $ret = false;
 
