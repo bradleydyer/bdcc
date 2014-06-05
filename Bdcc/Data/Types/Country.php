@@ -40,7 +40,7 @@ class Country {
             "BZ" => "Belize",
             "BJ" => "Benin",
             "BM" => "Bermuda",
-            "BT" => "Bhutan"
+            "BT" => "Bhutan",
             "BO" => "Bolivia, Plurinational State of",
             "BQ" => "Bonaire, Sint Eustatius and Saba",
             "BA" => "Bosnia and Herzegovina",
@@ -144,7 +144,7 @@ class Country {
             "LY" => "Libya",
             "LI" => "Liechtenstein",
             "LT" => "Lithuania",
-            "LU" => "Luxembourg"
+            "LU" => "Luxembourg",
             "MO" => "Macao",
             "MK" => "Macedonia, the former Yugoslav Republic of",
             "MG" => "Madagascar",
@@ -199,7 +199,7 @@ class Country {
             "RO" => "Romania",
             "RU" => "Russian Federation",
             "RW" => "Rwanda",
-            "BL" => "Saint Barthélemy"
+            "BL" => "Saint Barthélemy",
             "SH" => "Saint Helena, Ascension and Tristan da Cunha",
             "KN" => "Saint Kitts and Nevis",
             "LC" => "Saint Lucia",
