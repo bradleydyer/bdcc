@@ -184,9 +184,9 @@ class County {
      * @param   boolean     $keepAssoc      Whether to return associative array of country => list of counties
      * @return  array                       Array of counties | Associative array of countries and counties
      */
-    public static function getCounties($keepAssoc = true)
+    public static function getCounties($keepAssoc = false)
     {
-        if ($keepAssoc) {
+        if (!$keepAssoc) {
             return self::getAllCounties();
         }
 
