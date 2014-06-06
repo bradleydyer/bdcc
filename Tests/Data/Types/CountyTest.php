@@ -14,7 +14,7 @@ use Bdcc\Data\Types\County;
 class CountyTest extends TestCase
 {
     /**
-     * Tests static get countries
+     * Tests static get counties
      */
     public function testGetAllCounties()
     {

@@ -6,6 +6,7 @@ namespace Bdcc\Data\Types;
  * Bdcc\Data\Types\Country
  *
  * @author David Kursten <david.kursten@bradleydyer.com>
+ * @author Kris Rybak <kris.rybak@bradleydyer.com>
  */
 class County {
     /**
@@ -157,13 +158,17 @@ class County {
 
     /**
      * Get list of all counties
+     *
+     * Alias of getCounties()
      */
     public static function getAllCounties()
     {
         // Save some space for array
         $list = array();
+
         // Iterate through the list of countries and get list of counties
         foreach (self::$counties as $country => $counties) {
+
             // Iterate through list of counties and pop each county to the list
             foreach ($counties as $county) {
                 $list[] = $county;
@@ -171,5 +176,20 @@ class County {
         }
 
         return $list;
+    }
+
+    /**
+     * Gets list of counties
+     *
+     * @param   boolean     $keepAssoc      Whether to return associative array of country => list of counties
+     * @return  array                       Array of counties | Associative array of countries and counties
+     */
+    public static function getCounties($keepAssoc = true)
+    {
+        if ($keepAssoc) {
+            return self::getAllCounties();
+        }
+
+        return self::$counties;
     }
 }
