@@ -64,6 +64,23 @@ class PagerTest extends TestCase
     }
 
     /**
+     * Tests setResultCount/getResultCount
+     */
+    public function testResultCount()
+    {
+        $results    = array(1,2,3,4,5,6,7,8,9,10);
+        // set elements with limit 5
+        $pager      = new Pager($results);
+        $this->assertInstanceOf('Bdcc\Data\Pagination\Pager',$pager->setLimit(5));
+
+        $this->assertInstanceOf('Bdcc\Data\Pagination\Pager',$pager->setResultCount(1));
+        $this->assertEquals(1, $pager->getResultCount());
+
+        $pager->getResults();
+        $this->assertEquals(5, $pager->getResultCount());
+    }
+
+    /**
      * Tests count() elements
      */
     public function testCount()

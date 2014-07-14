@@ -26,6 +26,11 @@ class Pager
      */
     private $offset;
 
+    /**
+     * @var integer Specifies number of results returned by last result set
+     */
+    private $resultCount;
+
     public function __construct($elements = null, $offset = null, $limit = null)
     {
         $this->elements = array();
@@ -116,6 +121,29 @@ class Pager
     }
 
     /**
+     * Sets resultCount
+     *
+     * @param   integer     Number of the results in a current result set
+     * @return  Bdcc\Data\Pagination\Pager;
+     */
+    public function setResultCount($resultCount)
+    {
+        $this->resultCount = $resultCount;
+
+        return $this;
+    }
+
+    /**
+     * Gets resultCount
+     *
+     * @return  integer|null
+     */
+    public function getResultCount()
+    {
+        return $this->resultCount;
+    }
+
+    /**
      * Returns total number of results
      *
      * @return  integer
@@ -132,6 +160,20 @@ class Pager
      */
     public function getResults($offset = null, $limit = null)
     {
-        return array_slice($this->elements, $this->offset, $this->limit);
+        // Set offset and limit
+        if (!is_null($offset)) {
+            $this->offset = $offset;
+        }
+
+        if (!is_null($limit)) {
+            $this->limit = $limit;
+        }
+
+        $result = array_slice($this->elements, $this->offset, $this->limit);
+
+        // Set the number of results returned by last result set
+        $this->setResultCount(count($result));
+
+        return $result;
     }
 }
