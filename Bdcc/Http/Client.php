@@ -464,6 +464,11 @@ class Client
             $this->requestData = $requestData;
         }
 
+        // if the method is set to GET, append data to query string
+        if ($this->getRequestMethod() == 'GET') {
+            $this->setGetRequestData($this->requestData);
+        }
+
         return $this;
     }
 
@@ -475,6 +480,33 @@ class Client
     public function getRequestData()
     {
         return $this->requestData;
+    }
+
+    /**
+     * Factory method
+     * Transforms request data into query string and appends it to request URI
+     *
+     * @param   mixed       $requestData    Sets POST data, can be either string or array
+     * @return  Client
+     */
+    public function setGetRequestData($requestData = null)
+    {
+        if (!is_null($requestData)) {
+            // Check if query string already exists in the request URI
+            if (strpos($this->getRequestUri(), '?')) {
+                if (substr($this->getRequestUri(), -1) == '&') {
+                    // Last character of query string already is '&', just add request data
+                    $this->setRequestUri($this->getRequestUri() . $this->requestData);
+                } else {
+                    $this->setRequestUri($this->getRequestUri() . '&' . $this->requestData);
+                }
+            } else {
+                // Add query string
+                $this->setRequestUri($this->getRequestUri() . '?' . $this->requestData);
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -525,7 +557,7 @@ class Client
     /**
      * Resets any per-request settings ready for use with another URI
      * Clears the URI, request data, credentials and headers
-     * Does not change time-out behaviour, proxy settings, etc.
+     * Does not change time-out behavior, proxy settings, etc.
      *
      * @return  Client
      */
