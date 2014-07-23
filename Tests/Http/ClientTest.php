@@ -241,4 +241,16 @@ class ClientTest extends TestCase
         $this->assertTrue(is_array($client->getRequestHeaders()));
         $this->assertEquals($expected, $client->getRequestHeaders());
     }
+
+    public function testRequestData()
+    {
+        $data = array(
+            'string'    => 'abc',
+            'integer'   => 123,
+        );
+
+        $client = new Client();
+        $this->assertInstanceOf('Bdcc\Http\Client', $client->setRequestData($data));
+        $this->assertEquals('?'.http_build_query($data), $client->getRequestUri());
+    }
 }
