@@ -233,8 +233,8 @@ class Client
             ->setRequestData($data)
             ->getHttpClient()
                 ->setRequestUri($this->getBaseUrl() . $route)
-                ->setRequestData($this->getRequestData())
                 ->setRequestMethod($method)
+                ->setRequestData($this->getRequestData())
                 ->sendRequest();
 
         // Send request
