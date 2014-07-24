@@ -10,7 +10,7 @@ use Bdcc\Status as Bdcc_Status;
  * Test class for Bdcc_Json_Parser
  *
  * @author Kris Rybak <kris.rybak@bradleydyer.com>
- * @group Bdcc_Http
+ * @group Bdcc_Json
  */
 class ParserTest extends TestCase
 {
