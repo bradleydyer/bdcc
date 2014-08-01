@@ -33,6 +33,7 @@ class CountyTest extends TestCase
         $this->assertTrue(is_array($counties));
         foreach ($counties as $key => $value) {
             $this->assertTrue(is_string($key));
+            $this->assertTrue($key === $value);
         }
     }
 }
