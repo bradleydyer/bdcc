@@ -21,5 +21,18 @@ class CountyTest extends TestCase
         $counties = County::getAllCounties();
         $this->assertTrue(is_array($counties));
         $this->assertTrue(!empty($counties));
+        foreach ($counties as $key => $value) {
+            $this->assertTrue(is_int($key));
+        }
+    }
+
+    public function testGetAllCountiesAssoc()
+    {
+        $counties = County::getAllCounties(true);
+        $this->assertTrue(!empty($counties));
+        $this->assertTrue(is_array($counties));
+        foreach ($counties as $key => $value) {
+            $this->assertTrue(is_string($key));
+        }
     }
 }
