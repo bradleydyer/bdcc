@@ -204,11 +204,11 @@ class County {
         if($assocKeys) {
             $counties = array();
 
-            foreach (self::$counties as $area) {
+            foreach (self::$counties as $area => $areaCounties) {
                 $counties[$area] = array();
 
-                foreach ($area as $key => $value) {
-                    $counties[$area][$value] = $value;
+                foreach ($areaCounties as $county) {
+                    $counties[$area][$county] = $county;
                 }
             }
 
