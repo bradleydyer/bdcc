@@ -160,9 +160,11 @@ class County {
     /**
      * Get list of all counties
      *
+     * @param   boolean     $assocKeys      Whether the keys for the counties are associative
+     * @return  array                       Array of counties | Associative array of counties
      * Alias of getCounties()
      */
-    public static function getAllCounties($assoc = false)
+    public static function getAllCounties($assocKeys = false)
     {
         // Save some space for array
         $list = array();
@@ -173,7 +175,7 @@ class County {
             // Iterate through list of counties and push each county to the list
             foreach ($counties as $county) {
                 // If associative is true set the key as the county name
-                if($assoc) {
+                if($assocKeys) {
                     $list[$county] = $county;
                 } else {
                     $list[] = $county;
@@ -187,13 +189,30 @@ class County {
     /**
      * Gets list of counties
      *
-     * @param   boolean     $keepAssoc      Whether to return associative array of country => list of counties
+     * @param   boolean     $keepCountries  Whether to return associative array of country => list of counties
+     * @param   boolean     $assocKeys      Whether the keys for the counties are associative
      * @return  array                       Array of counties | Associative array of countries and counties
      */
-    public static function getCounties($keepAssoc = false)
+    public static function getCounties($keepCountries = false, $assocKeys = false)
     {
-        if (!$keepAssoc) {
-            return self::getAllCounties();
+        if (!$keepCountries) {
+            return self::getAllCounties($assocKeys);
+        }
+
+        // If associative keys is true rebuild the counties
+        // array with the correct keys
+        if($assocKeys) {
+            $counties = array();
+
+            foreach (self::$counties as $area) {
+                $counties[$area] = array();
+
+                foreach ($area as $key => $value) {
+                    $counties[$area][$value] = $value;
+                }
+            }
+
+            return $counties;
         }
 
         return self::$counties;
