@@ -9,6 +9,7 @@ use Bdcc\Data\Types\County;
  * Test class for Bdcc_Data_Type_Country
  *
  * @author David Kursten <david.kursten@bradleydyer.com>
+ * @author Anton McCook <anton.mccook@bradleydyer.com>
  * @group Bdcc_Data_Types
  */
 class CountyTest extends TestCase

@@ -7,6 +7,7 @@ namespace Bdcc\Data\Types;
  *
  * @author David Kursten <david.kursten@bradleydyer.com>
  * @author Kris Rybak <kris.rybak@bradleydyer.com>
+ * @author Anton McCook <anton.mccook@bradleydyer.com>
  */
 class County {
     /**
