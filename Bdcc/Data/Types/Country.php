@@ -29,7 +29,7 @@ class Country {
         foreach ($priorityCodes as $key => $value) {
 
             // If the country code exists within the standard country list
-            if(array_key_exists($value, $countries)) {
+            if (array_key_exists($value, $countries)) {
                 // Get the 2 letter country code
                 $code = $value;
 
