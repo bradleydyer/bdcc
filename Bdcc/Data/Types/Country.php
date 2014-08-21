@@ -2,12 +2,53 @@
 
 namespace Bdcc\Data\Types;
 
+use Bdcc\Exception as BdccException;
+
 /**
  * Bdcc\Data\Types\Country
  *
  * @author Anton McCook <anton.mccook@bradleydyer.com>
  */
 class Country {
+    /**
+     * Get a list of countries with the prioritys at the beginning of the array
+     *
+     * @param  array    $priorityCodes    An array 2 letter country codes to move to the beginning of the array
+     * @throws BdccException              Throws an exception if a country code could not be found
+     * @return array
+     */
+    public static function getCountriesWithPriority(array $priorityCodes) {
+        // Get all the countries
+        $countries = self::getCountries();
+
+        // Reverse the order of the prioritys so the first
+        // entered in the array is the first in the new countries list
+        $priorityCodes = array_reverse($priorityCodes, true);
+
+        // Loop through each priority
+        foreach ($priorityCodes as $key => $value) {
+
+            // If the country code exists within the standard country list
+            if(array_key_exists($value, $countries)) {
+                // Get the 2 letter country code
+                $code = $value;
+
+                // Get the country full name
+                $name = $countries[$value];
+
+                // Unset the country from the list
+                unset($countries[$value]);
+
+                // Append the country to the top of the list
+                $countries = array($code => $name) + $countries;
+            } else {
+                throw new BdccException('Could not find country code ' . $value . ' within Bdcc\Data\Types\Country::getCountriesWithPriority');
+            }
+        }
+
+        return $countries;
+    }
+
     /**
      * Get a list of countries
      *
