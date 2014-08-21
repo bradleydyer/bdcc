@@ -22,4 +22,30 @@ class CountryTest extends TestCase
         $this->assertTrue(is_array($countries));
         $this->assertTrue(!empty($countries));
     }
+
+    /**
+     * Tests static get countries with priority
+     */
+    public function testGetCountriesWithPriority()
+    {
+        $countries = Country::getCountriesWithPriority(array('GB','IE'));
+        $this->assertTrue(is_array($countries));
+        $this->assertTrue(!empty($countries));
+
+        $gbPositon = array_search('GB', array_keys($countries));
+        $iePositon = array_search('IE', array_keys($countries));
+
+        $this->assertTrue($gbPositon == 0);
+        $this->assertTrue($iePositon == 1);
+    }
+
+    /**
+     * Tests invalid static get countries with priority
+     *
+     * @expectedException \Bdcc\Exception
+     */
+    public function testInvalidGetCountriesWithPriority()
+    {
+        $countries = Country::getCountriesWithPriority(array('AP'));
+    }
 }
