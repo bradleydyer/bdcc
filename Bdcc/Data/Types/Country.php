@@ -11,7 +11,7 @@ use Bdcc\Exception as BdccException;
  */
 class Country {
     /**
-     * Get a list of countries with the prioritys at the beginning of the array
+     * Get a list of countries with the priorities at the beginning of the array
      *
      * @param  array    $priorityCodes    An array 2 letter country codes to move to the beginning of the array
      * @throws BdccException              Throws an exception if a country code could not be found
@@ -21,7 +21,7 @@ class Country {
         // Get all the countries
         $countries = self::getCountries();
 
-        // Reverse the order of the prioritys so the first
+        // Reverse the order of the priorities so the first
         // entered in the array is the first in the new countries list
         $priorityCodes = array_reverse($priorityCodes, true);
 
