@@ -185,4 +185,14 @@ class Pager
 
         return $result;
     }
+
+    /**
+     * Returns total number of pages
+     *
+     * @return  integer
+     */
+    public function getNumberOfpages()
+    {
+        return ceil($this->getResultCount() / $this->getLimit());
+    }
 }
