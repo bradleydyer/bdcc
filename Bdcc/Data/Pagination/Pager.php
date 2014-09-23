@@ -75,6 +75,15 @@ class Pager
     }
 
     /**
+     * Get elements
+     *
+     * @return  array;
+     */
+    public function getElements(){
+        return $this->elements;
+    }
+
+    /**
      * Sets Limit
      *
      * @param   integer     Number of the results to limit set to
