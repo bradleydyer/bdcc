@@ -34,9 +34,9 @@ class ResultBag
      */
     private $limit;
 
-    public function __construct()
+    public function __construct($subset = array())
     {
-        $this->subset = array();
+        $this->setSubset($subset);
     }
 
     /**
@@ -86,6 +86,8 @@ class ResultBag
     public function setSetCount($numberOfResults)
     {
         $this->setCount = $numberOfResults;
+
+        return $this;
     }
 
     /**
@@ -107,6 +109,8 @@ class ResultBag
     public function setOffset($offset)
     {
         $this->offset = $offset;
+
+        return $this;
     }
 
     /**
@@ -128,6 +132,8 @@ class ResultBag
     public function setLimit($limit)
     {
         $this->limit = $limit;
+
+        return $this;
     }
 
     /**
