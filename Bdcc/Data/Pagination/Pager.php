@@ -191,8 +191,12 @@ class Pager
      *
      * @return  integer
      */
-    public function getNumberOfpages()
+    public function getNumberOfPages()
     {
-        return ceil($this->getResultCount() / $this->getLimit());
+        if (!is_null($this->getLimit()) && ($this->getLimit() !== 0)) {
+            return (int) ceil(count($this->getElements()) / $this->getLimit());
+        }
+
+        return 1;
     }
 }
