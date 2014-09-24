@@ -125,4 +125,23 @@ class PagerTest extends TestCase
         $this->assertEquals(10, $pager->count());
         $this->assertEquals($expected, $pager->getResults());
     }
+
+    /**
+     * Tests getResults()
+     */
+    public function testGetNumberOfPages()
+    {
+        $results    = array(1,2,3,4,5,6,7,8,9,10,11,12);
+
+        // 5 elements per page
+        $pager      = new Pager($results, null, 5);
+        // Expecting 3 pages
+        $expected   = 3;
+        $this->assertInstanceOf('Bdcc\Data\Pagination\Pager',$pager);
+        $this->assertEquals($expected, $pager->getNumberOfPages());
+
+        // Get number of pages without limit set
+        $pager      = new Pager($results);
+        $this->assertEquals(1, $pager->getNumberOfPages());
+    }
 }
