@@ -194,7 +194,7 @@ class Pager
     public function getNumberOfPages()
     {
         if (!is_null($this->getLimit()) && ($this->getLimit() !== 0)) {
-            return (int) ceil(count($this->getElements()) / $this->getLimit());
+            return (int) ceil($this->count() / $this->getLimit());
         }
 
         return 1;
