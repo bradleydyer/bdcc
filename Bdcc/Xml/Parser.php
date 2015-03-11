@@ -38,7 +38,7 @@ class Parser implements ParserInterface
      * @static
      * @return \XMLReader
      */
-    public static function getXmlReader(XMLReader $xmlReader)
+    public static function getXmlReader()
     {
         return self::$xmlReader;
     }
