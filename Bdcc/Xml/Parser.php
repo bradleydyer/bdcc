@@ -3,153 +3,107 @@
 namespace Bdcc\Xml;
 
 use Bdcc\ParserInterface;
+use \StdClass;
+use \XmlReader;
 
 /**
- * Bdcc_Xml_Parser Class
+ * Bdcc\Xml\Parser
  *
- * Allows decoding of Xml
+ * Class to allow decoding of an xml string
+ *
  * @author Kris Rybak <kris.rybak@bradleydyer.com>
  * @author Anton McCook <anton.mccook@bradleydyer.com>
  */
 class Parser implements ParserInterface
 {
-    private $_xml;
-    private $_observer;
-    private $_observerMethod;
-    private $_key;
-    private $_valid;
+    public static $xmlReader = null;
 
-    public function __construct()
+    public static function setXmlReader(XMLReader $xmlReader)
     {
-        $this->_xml             = NULL;
-        $this->_observer        = NULL;
-        $this->_observerMethod  = NULL;
-        $this->_valid           = TRUE;
-        $this->_key             = 0;
-    }
-
-    public function setXmlReader(\XMLReader $obj)
-    {
-        $this->_xml = $obj;
-        $this->_valid           = TRUE;
-        $this->_key             = 0;
-    }
-
-    public function registerObserver($obj, $method = 'parseEvent')
-    {
-        $this->_observer            = $obj;
-        $this->_observerMethod      = $method;
+        self::$xmlReader = $xmlReader;
     }
 
     /**
     * Reads from an XMLReader object and returns StdClass object.
     * @return mixed StdClass containing element.
     */
-    public function parse()
+    public static function parse($data)
     {
-        $ret        = new \StdClass;
-        $isEmpty    = FALSE;
+        return self::parseXml($data);
+    }
+
+    private static function parseXml($data, $iteration = 1)
+    {
+        if(!is_string($data)) {
+            throw new \InvalidArgumentException("Bdcc\\Xml\\Parser excpects parameter data to be of type string");
+        }
+
+        if(is_null(self::$xmlReader)) {
+            self::$xmlReader = new XMLReader;
+        }
+
+        if($iteration == 1) {
+            self::$xmlReader->xml($data);
+        }
+
+        $ret        = new StdClass;
+        $isEmpty    = false;
 
         //If we find the start of an element parse it
-        if ( $this->_xml->nodeType == \XMLReader::ELEMENT )
+        if ( self::$xmlReader->nodeType == XMLReader::ELEMENT )
         {
-            $ret->name  = $this->_xml->localName;
+            $ret->name  = self::$xmlReader->localName;
 
             //Its important to test for emtpy element here, before parsing
             //attributes of tag as the empty property gets reset.
-            if($this->_xml->isEmptyElement)
+            if(self::$xmlReader->isEmptyElement)
             {
-                $isEmpty = TRUE;
+                $isEmpty = true;
             }
 
             //Save attributes
-            if( $this->_xml->hasAttributes )
+            if( self::$xmlReader->hasAttributes )
             {
-                $ret->attributes = new \StdClass;
-                while( $this->_xml->moveToNextAttribute() )
+                $ret->attributes = new StdClass;
+                while( self::$xmlReader->moveToNextAttribute() )
                 {
-                    $attrib = $this->_xml->localName;
-                    $ret->attributes->$attrib = $this->_xml->value;
+                    $attrib = self::$xmlReader->localName;
+                    $ret->attributes->$attrib = self::$xmlReader->value;
                 }
             }
 
             //If the element isnt emtpy, return its value or recurse further.
-            while( !$isEmpty && $this->_xml->read() )
+            while( !$isEmpty && self::$xmlReader->read() )
             {
-                if( $this->_xml->nodeType == \XMLReader::END_ELEMENT )
+                if( self::$xmlReader->nodeType == XMLReader::END_ELEMENT )
                 {
                     break; //Time to return from this parse method.
                 }
-                elseif( $this->_xml->nodeType == \XMLReader::ELEMENT )
+                elseif( self::$xmlReader->nodeType == XMLReader::ELEMENT )
                 {
-                    $ret->value[] = $this->parse();
+                    $ret->value[] = self::parseXml($data, $iteration + 1);
                 }
-                elseif( $this->_xml->nodeType == \XMLReader::TEXT ||
-                        $this->_xml->nodeType == \XMLReader::CDATA )
+                elseif( self::$xmlReader->nodeType == XMLReader::TEXT ||
+                        self::$xmlReader->nodeType == XMLReader::CDATA )
                 {
-                    $ret->value = $this->_xml->value;
+                    $ret->value = self::$xmlReader->value;
                 }
             }
         }
 
         //If we find a text or cdata section, return it as a string.
-        elseif( $this->_xml->nodeType == \XMLReader::TEXT ||
-                $this->_xml->nodeType == \XMLReader::CDATA )
+        elseif( self::$xmlReader->nodeType == XMLReader::TEXT ||
+                self::$xmlReader->nodeType == XMLReader::CDATA )
         {
-            $ret = $this->_xml->value;
+            $ret = self::$xmlReader->value;
         }
 
         else
         {
-            $this->_xml->next();
-            $ret = $this->parse();
+            self::$xmlReader->next();
+            $ret = self::parseXml($data, $iteration + 1);
         }
 
         return $ret;
-    }
-
-    /**
-    * This method parses the document and will inform the observer.
-    * @return NULL
-    */
-    public function start()
-    {
-        //Iterate through document
-        while($this->_xml->read()) {
-            if( $this->_xml->nodeType == \XMLReader::ELEMENT )
-            {
-                //We have an element, let the observer know
-                if($this->_observer && $this->_observerMethod)
-                {
-                    $method = $this->_observerMethod;
-                    $elementName = $this->_xml->localName;
-                    $this->_observer->$method($this, $elementName);
-                }
-            }
-        }
-    }
-
-    /**
-     * Moves the pointer forward by 1 XML element and returns the object
-     * if it is the correct name
-     *
-     * @param Array $filter The element to filter on
-     * @return mixed StdClass containing element.
-     */
-    public function next(Array $filter)
-    {
-        $this->_valid = FALSE;
-
-        //Iterate through document
-        while($this->_xml->read()) {
-            if( $this->_xml->nodeType == \XMLReader::ELEMENT )
-            {
-                if(in_array($this->_xml->localName, $filter)){
-                    return $this->parse();
-                }
-            }
-        }
-
-        return FALSE;
     }
 }
