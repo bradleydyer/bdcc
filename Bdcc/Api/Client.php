@@ -215,6 +215,8 @@ class Client
         $knownParsersers = array(
             'application/json'  => array('parser' => 'Bdcc\\Json\\Parser'),
             'text/json'         => array('parser' => 'Bdcc\\Json\\Parser'),
+            'application/xml'   => array('parser' => 'Bdcc\\Xml\\Parser'),
+            'text/xml'          => array('parser' => 'Bdcc\\Xml\\Parser'),
         );
 
         $this->parsers = $knownParsersers;
