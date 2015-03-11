@@ -18,8 +18,10 @@ class ParserTest extends TestCase
 
     public function setUp()
     {
+        // Create the path to the sample.xml file
         $file = __DIR__ . '/sample.xml';
 
+        // If the file does not exist throw an exception
         if(!file_exists($file)) {
             throw new Bdcc_Exception(
                 sprintf(
@@ -30,8 +32,10 @@ class ParserTest extends TestCase
             );
         }
 
+        // Get the handle of the file
         $handle = fopen($file, "r");
 
+        // Read the file and store the contents within $data
         $this->data = fread($handle, filesize($file));
     }
 

@@ -16,22 +16,37 @@ use \XmlReader;
  */
 class Parser implements ParserInterface
 {
+    /**
+     * @var \XmlReader $xmlReader    Instance of XMLReader class
+     */
     public static $xmlReader = null;
 
+    /**
+     * Sets the XMLReader
+     *
+     * @static
+     */
     public static function setXmlReader(XMLReader $xmlReader)
     {
         self::$xmlReader = $xmlReader;
     }
 
+
     /**
-    * Reads from an XMLReader object and returns StdClass object.
-    * @return mixed StdClass containing element.
-    */
+     * @inheritdoc
+     *
+     * @return \StdClass Containing elements.
+     */
     public static function parse($data)
     {
         return self::parseXml($data);
     }
 
+    /**
+     * Reads from the XMLReader object and returns StdClass object.
+     *
+     * @return \StdClass Containing elements.
+     */
     private static function parseXml($data, $iteration = 1)
     {
         if(!is_string($data)) {
