@@ -17,6 +17,7 @@ use \XmlReader;
 class Parser implements ParserInterface
 {
     /**
+     * @static
      * @var \XmlReader $xmlReader    Instance of XMLReader class
      */
     public static $xmlReader = null;
@@ -31,10 +32,21 @@ class Parser implements ParserInterface
         self::$xmlReader = $xmlReader;
     }
 
+    /**
+     * Get the XMLReader
+     *
+     * @static
+     * @return \XMLReader
+     */
+    public static function getXmlReader(XMLReader $xmlReader)
+    {
+        return self::$xmlReader;
+    }
 
     /**
      * @inheritdoc
      *
+     * @static
      * @return \StdClass Containing elements.
      */
     public static function parse($data)
@@ -45,6 +57,7 @@ class Parser implements ParserInterface
     /**
      * Reads from the XMLReader object and returns StdClass object.
      *
+     * @static
      * @return \StdClass Containing elements.
      */
     private static function parseXml($data, $iteration = 1)
