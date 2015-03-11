@@ -8,7 +8,8 @@ use Bdcc\ParserInterface;
  * Bdcc_Xml_Parser Class
  *
  * Allows decoding of Xml
- * @author Kris Rybak kris.rybak@bradleydyer.com
+ * @author Kris Rybak <kris.rybak@bradleydyer.com>
+ * @author Anton McCook <anton.mccook@bradleydyer.com>
  */
 class Parser implements ParserInterface
 {
@@ -27,7 +28,7 @@ class Parser implements ParserInterface
         $this->_key             = 0;
     }
 
-    public function setXmlReader(XMLReader $obj)
+    public function setXmlReader(\XMLReader $obj)
     {
         $this->_xml = $obj;
         $this->_valid           = TRUE;
@@ -46,11 +47,11 @@ class Parser implements ParserInterface
     */
     public function parse()
     {
-        $ret        = new StdClass;
+        $ret        = new \StdClass;
         $isEmpty    = FALSE;
 
         //If we find the start of an element parse it
-        if ( $this->_xml->nodeType == XMLReader::ELEMENT )
+        if ( $this->_xml->nodeType == \XMLReader::ELEMENT )
         {
             $ret->name  = $this->_xml->localName;
 
@@ -64,7 +65,7 @@ class Parser implements ParserInterface
             //Save attributes
             if( $this->_xml->hasAttributes )
             {
-                $ret->attributes = new StdClass;
+                $ret->attributes = new \StdClass;
                 while( $this->_xml->moveToNextAttribute() )
                 {
                     $attrib = $this->_xml->localName;
@@ -75,16 +76,16 @@ class Parser implements ParserInterface
             //If the element isnt emtpy, return its value or recurse further.
             while( !$isEmpty && $this->_xml->read() )
             {
-                if( $this->_xml->nodeType == XMLReader::END_ELEMENT )
+                if( $this->_xml->nodeType == \XMLReader::END_ELEMENT )
                 {
                     break; //Time to return from this parse method.
                 }
-                elseif( $this->_xml->nodeType == XMLReader::ELEMENT )
+                elseif( $this->_xml->nodeType == \XMLReader::ELEMENT )
                 {
                     $ret->value[] = $this->parse();
                 }
-                elseif( $this->_xml->nodeType == XMLReader::TEXT ||
-                        $this->_xml->nodeType == XMLReader::CDATA )
+                elseif( $this->_xml->nodeType == \XMLReader::TEXT ||
+                        $this->_xml->nodeType == \XMLReader::CDATA )
                 {
                     $ret->value = $this->_xml->value;
                 }
@@ -92,8 +93,8 @@ class Parser implements ParserInterface
         }
 
         //If we find a text or cdata section, return it as a string.
-        elseif( $this->_xml->nodeType == XMLReader::TEXT ||
-                $this->_xml->nodeType == XMLReader::CDATA )
+        elseif( $this->_xml->nodeType == \XMLReader::TEXT ||
+                $this->_xml->nodeType == \XMLReader::CDATA )
         {
             $ret = $this->_xml->value;
         }
@@ -115,7 +116,7 @@ class Parser implements ParserInterface
     {
         //Iterate through document
         while($this->_xml->read()) {
-            if( $this->_xml->nodeType == XMLREADER::ELEMENT )
+            if( $this->_xml->nodeType == \XMLReader::ELEMENT )
             {
                 //We have an element, let the observer know
                 if($this->_observer && $this->_observerMethod)
@@ -141,7 +142,7 @@ class Parser implements ParserInterface
 
         //Iterate through document
         while($this->_xml->read()) {
-            if( $this->_xml->nodeType == XMLREADER::ELEMENT )
+            if( $this->_xml->nodeType == \XMLReader::ELEMENT )
             {
                 if(in_array($this->_xml->localName, $filter)){
                     return $this->parse();
