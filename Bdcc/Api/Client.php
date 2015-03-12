@@ -315,7 +315,7 @@ class Client
         // Send request
         if ($this->getHttpClient()) {
             // Get wether the response is complete
-            $isResponseComplete = $this->getHttpClient()->isResponseComplete()
+            $isResponseComplete = $this->getHttpClient()->isResponseComplete();
 
             // Check if the response complete check is disabled
             if(in_array('isResponseComplete', $this->disabledChecks)) {
