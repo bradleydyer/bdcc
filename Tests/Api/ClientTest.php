@@ -114,7 +114,13 @@ class ClientTest extends TestCase
         // Test there is 1 disabled check
         $this->assertEquals(1, count($disabledChecks));
 
-        // Test the disabled check is the one added
+        // Test the first disabled check is the one added
         $this->assertEquals($expected, reset($disabledChecks));
+
+        // Set expected invalid argument exception
+        $this->setExpectedException('\\InvalidArgumentException');
+
+        // Add an invalid check
+        $client->addDisabledCheck('CompleteResponse');
     }
 }
