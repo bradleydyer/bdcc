@@ -103,7 +103,7 @@ class ClientTest extends TestCase
         $this->assertTrue(count($disabledChecks) == 0);
 
         // Test addDisabledCheck is chainable
-        $this->assertInstanceOf('Bdcc\Api\Client', $client->addDisabledCheck($expected));
+        $this->assertInstanceOf('Bdcc\\Api\\Client', $client->addDisabledCheck($expected));
 
         // Get the disabled checks again after adding one
         $disabledChecks = $client->getDisabledChecks();
