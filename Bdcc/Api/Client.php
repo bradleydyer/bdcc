@@ -334,7 +334,17 @@ class Client
                 $parsers        = $this->getParsers();
                 // Get content type
                 $contentType    = $this->getHttpClient()->getResponseHeader('content-type');
-                $data           = fgets($this->getHttpClient()->getResponseHandle());
+
+                // Get the handle for the response
+                $handle = $this->getHttpClient()->getResponseHandle();
+
+                $data = "";
+
+                // Read handle untill end of file
+                while(!feof($handle)) {
+                    $data .= fgets($handle);
+                }
+
                 // Try to match content type to available parser
                 if ($contentType !== false && array_key_exists($contentType, $parsers)) {
                     if (class_exists($parsers[$contentType]['parser'])) {
