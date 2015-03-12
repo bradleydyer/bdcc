@@ -249,7 +249,7 @@ class Client
      */
     public function addDisabledCheck($check) {
         if(!in_array($check, self::$validChecks)) {
-            throw new \InvalidArgumentException("Valid Bdcc\\Api\\Client checks are : ". implode(', ', self::$validChecks));
+            throw new \InvalidArgumentException('Valid Bdcc\\Api\\Client checks are : ' . implode(', ', self::$validChecks));
         }
 
         $this->disabledChecks[] = $check;
@@ -338,7 +338,7 @@ class Client
                 // Get the handle for the response
                 $handle = $this->getHttpClient()->getResponseHandle();
 
-                $data = "";
+                $data = '';
 
                 // Read handle untill end of file
                 while(!feof($handle)) {
@@ -370,7 +370,7 @@ class Client
                     $ret = $this->getHttpClient()->getResponseHandle();
                 }
             } else {
-                throw new Bdcc_Exception("Incomplete API response");
+                throw new Bdcc_Exception('Incomplete API response');
             }
         } else {
             throw new Bdcc_Exception($this->getHttpClient()->getError());
