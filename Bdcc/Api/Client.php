@@ -40,6 +40,35 @@ class Client
     private $parsers;
 
     /**
+     * @var array
+     */
+    private $disabledChecks;
+
+    public static $validChecks = array(
+        'isResponseComplete',
+    );
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->setHttpClient(new Bdcc_Http_Client());
+        $this->setDefaultParsers();
+        $this->requestData = array();
+        $this->disabledChecks = array();
+    }
+
+    /**
+     * Helper method that allows for public access to $validChecks
+     *
+     * @return array
+     */
+    public static function getValidChecks() {
+        return self::$validChecks;
+    }
+
+    /**
      * Sets Client
      *
      * @param   Client  $httpClient Http Client to use
@@ -198,16 +227,6 @@ class Client
     }
 
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->setHttpClient(new Bdcc_Http_Client());
-        $this->setDefaultParsers();
-        $this->requestData = array();
-    }
-
-    /**
      * Sets default parsers
      */
     protected function setDefaultParsers()
@@ -220,6 +239,60 @@ class Client
         );
 
         $this->parsers = $knownParsersers;
+    }
+
+    /**
+     * Add a validation check to disable
+     *
+     * @param   string  $check    Check name to disable
+     * @return  Client
+     */
+    public function addDisabledCheck($check) {
+        if(!in_array($check, self::$validChecks)) {
+            throw new \InvalidArgumentException('Valid Bdcc\\Api\\Client checks are : ' . implode(', ', self::$validChecks));
+        }
+
+        $this->disabledChecks[] = $check;
+
+        return $this;
+    }
+
+    /**
+     * Set the disabled validation checks
+     *
+     * @param   string  $check    Check name to disable
+     * @return  Client
+     */
+    public function setDisabledChecks(array $checks) {
+        foreach ($checks as $check) {
+            $this->addDisabledCheck($check);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the disabled validation checks
+     *
+     * @return  array
+     */
+    public function getDisabledChecks() {
+        return $this->disabledChecks;
+    }
+
+    /**
+     * Removes a disabled check
+     *
+     * @param   string  $check    The check to remove from the array
+     * @return  Client
+     */
+    public function removeDisabledCheck($check)
+    {
+        if ($key = array_search($check, $this->disabledChecks) !== false) {
+            unset($this->disabledChecks[$key]);
+        }
+
+        return $this;
     }
 
     /**
@@ -241,8 +314,17 @@ class Client
 
         // Send request
         if ($this->getHttpClient()) {
+            // Get wether the response is complete
+            $isResponseComplete = $this->getHttpClient()->isResponseComplete();
+
+            // Check if the response complete check is disabled
+            if(in_array('isResponseComplete', $this->disabledChecks)) {
+                // Override the complete response variable to true
+                $isResponseComplete = true;
+            }
+
             // Check we have got response back
-            if ($this->getHttpClient()->isResponseComplete()) {
+            if ($isResponseComplete) {
 
                 // Check for httpClient and server side errors
                 $httpCode = $this->getHttpClient()->getResponseCode();
@@ -252,7 +334,17 @@ class Client
                 $parsers        = $this->getParsers();
                 // Get content type
                 $contentType    = $this->getHttpClient()->getResponseHeader('content-type');
-                $data           = fgets($this->getHttpClient()->getResponseHandle());
+
+                // Get the handle for the response
+                $handle = $this->getHttpClient()->getResponseHandle();
+
+                $data = '';
+
+                // Read handle untill end of file
+                while(!feof($handle)) {
+                    $data .= fgets($handle);
+                }
+
                 // Try to match content type to available parser
                 if ($contentType !== false && array_key_exists($contentType, $parsers)) {
                     if (class_exists($parsers[$contentType]['parser'])) {
@@ -278,7 +370,7 @@ class Client
                     $ret = $this->getHttpClient()->getResponseHandle();
                 }
             } else {
-                throw new Bdcc_Exception("Incomplete API response");
+                throw new Bdcc_Exception('Incomplete API response');
             }
         } else {
             throw new Bdcc_Exception($this->getHttpClient()->getError());

@@ -90,4 +90,37 @@ class ClientTest extends TestCase
         $this->assertEquals($expected, $client->getParsers());
 
     }
+
+    public function testDisableCheck() {
+        $client = new Client();
+
+        $expected = "isResponseComplete";
+
+        // Check there are no checks disabled by default
+        // and an empty array is returned
+        $disabledChecks = $client->getDisabledChecks();
+        $this->assertTrue(is_array($disabledChecks));
+        $this->assertTrue(count($disabledChecks) == 0);
+
+        // Test addDisabledCheck is chainable
+        $this->assertInstanceOf('Bdcc\\Api\\Client', $client->addDisabledCheck($expected));
+
+        // Get the disabled checks again after adding one
+        $disabledChecks = $client->getDisabledChecks();
+
+        // Test getDisabledChecks returns an array
+        $this->assertTrue(is_array($disabledChecks));
+
+        // Test there is 1 disabled check
+        $this->assertEquals(1, count($disabledChecks));
+
+        // Test the first disabled check is the one added
+        $this->assertEquals($expected, reset($disabledChecks));
+
+        // Set expected invalid argument exception
+        $this->setExpectedException('\\InvalidArgumentException');
+
+        // Add an invalid check
+        $client->addDisabledCheck('CompleteResponse');
+    }
 }
