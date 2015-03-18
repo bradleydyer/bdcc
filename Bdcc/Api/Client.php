@@ -44,9 +44,17 @@ class Client
      */
     private $disabledChecks;
 
+    /**
+     * @var array
+     */
     public static $validChecks = array(
         'isResponseComplete',
     );
+
+    /**
+     * @var boolean
+     */
+    private $autoParse;
 
     /**
      * Constructor
@@ -57,6 +65,7 @@ class Client
         $this->setDefaultParsers();
         $this->requestData = array();
         $this->disabledChecks = array();
+        $this->autoParse = true;
     }
 
     /**
@@ -296,6 +305,29 @@ class Client
     }
 
     /**
+     * Get the auto parse setting
+     *
+     * @return  boolean
+     */
+    public function getAutoParse()
+    {
+        return $this->autoParse;
+    }
+
+    /**
+     * Set the auto parse setting
+     *
+     * @param   boolean $autoParse
+     * @return  boolean
+     */
+    public function setAutoParse($autoParse)
+    {
+        $this->autoParse = $autoParse;
+
+        return $this;
+    }
+
+    /**
      * Send request
      */
     public function sendRequest($route, array $data = array(), $method = 'GET')
@@ -337,6 +369,11 @@ class Client
 
                 // Get the handle for the response
                 $handle = $this->getHttpClient()->getResponseHandle();
+
+                // If auto parse is false return the handle
+                if(!$this->getAutoParse()) {
+                    return $handle;
+                }
 
                 $data = '';
 
