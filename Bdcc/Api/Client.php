@@ -318,7 +318,7 @@ class Client
      * Set the auto parse setting
      *
      * @param   boolean $autoParse
-     * @return  boolean
+     * @return  Client
      */
     public function setAutoParse($autoParse)
     {
