@@ -52,6 +52,33 @@ class Hash
     }
 
     /**
+     * Hashes an object using salt provided
+     *
+     * @param   string  $object hash an object
+     * @param   string  $salt   Salt to be used with object
+     * @param   integer $rounds The number of rounds to hash it by
+     * @return  StdClass
+     */
+    public static function hash($object, $salt = null, $rounds = 0)
+    {
+        $ret = new \StdClass();
+
+        $ret->salt = $salt;
+
+        // First mix password and salt
+        $data = serialize($object).$salt;
+
+        for ($i=0; $i <= $rounds; $i++) { 
+            $data = hash(self::$algo, $data);
+        }
+
+        $ret->hash      = $data;
+        $ret->rounds    = $rounds;
+
+        return $ret;
+    }
+
+    /**
      * Generates salt
      *
      * @param   integer     $lenght     Salt length
