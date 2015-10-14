@@ -57,6 +57,7 @@ class Hash
      * @param   string  $object hash an object
      * @param   string  $salt   Salt to be used with object
      * @param   integer $rounds The number of rounds to hash it by
+     * @param   string  $algo   Algorythm to use when hashing
      * @return  StdClass
      */
     public static function hash($object, $salt = null, $rounds = 0, $algo = null)
@@ -80,6 +81,20 @@ class Hash
         $ret->rounds    = $rounds;
 
         return $ret;
+    }
+
+    /**
+     * Helper method to hash using sha256
+     * Forwards to self::hash()
+     *
+     * @param   string  $object hash an object
+     * @param   string  $salt   Salt to be used with object
+     * @param   integer $rounds The number of rounds to hash it by
+     * @return  StdClass
+     */
+    public static function hash256($object, $salt = null, $rounds = 0)
+    {
+        return self::hash($object, $salt, $rounds, 'sha256');
     }
 
     /**
