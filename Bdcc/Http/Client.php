@@ -881,7 +881,7 @@ class Client
         }
 
         // If POST data has been supplied, set request data
-        if ($this->requestData && !($this->isSafeMethod($this->requestMethod()))){
+        if ($this->requestData && !($this->isSafeMethod($this->getRequestMethod()))){
             curl_setopt($this->ch, CURLOPT_POSTFIELDS, $this->getRequestData());
         }
 
