@@ -881,7 +881,7 @@ class Client
         }
 
         // If POST data has been supplied, set request data
-        if ($this->requestData){
+        if ($this->requestData && !($this->isSafeMethod($this->requestMethod()))){
             curl_setopt($this->ch, CURLOPT_POSTFIELDS, $this->getRequestData());
         }
 
@@ -958,5 +958,14 @@ class Client
         }
 
         return strlen($lineStr);
+    }
+
+    public static function isSafeMethod($method)
+    {
+        if (in_array($method, array('GET', 'HEAD', 'OPTIONS', 'TRACE'))) {
+            return true;
+        }
+
+        return false;
     }
 }
