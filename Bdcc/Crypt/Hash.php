@@ -59,7 +59,7 @@ class Hash
      * @param   integer $rounds The number of rounds to hash it by
      * @return  StdClass
      */
-    public static function hash($object, $salt = null, $rounds = 0)
+    public static function hash($object, $salt = null, $rounds = 0, $algo = null)
     {
         $ret = new \StdClass();
 
@@ -67,9 +67,13 @@ class Hash
 
         // First mix password and salt
         $data = serialize($object).$salt;
+        
+        if (is_null($algo)) {
+            $algo = self::$algo;
+        }
 
         for ($i=0; $i <= $rounds; $i++) { 
-            $data = hash(self::$algo, $data);
+            $data = hash($algo, $data);
         }
 
         $ret->hash      = $data;
