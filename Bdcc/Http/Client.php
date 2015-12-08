@@ -555,6 +555,18 @@ class Client
     }
 
     /**
+     * Clears request data payload
+     *
+     * @return Client
+     */
+    public function clearRequestData()
+    {
+        $this->requestData = null;
+
+        return $this;
+    }
+
+    /**
      * Resets any per-request settings ready for use with another URI
      * Clears the URI, request data, credentials and headers
      * Does not change time-out behavior, proxy settings, etc.
