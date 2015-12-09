@@ -168,6 +168,18 @@ class Client
     }
 
     /**
+     * Gets request data
+     *
+     * @return  Client
+     */
+    public function clearRequestData()
+    {
+        $this->requestData = array();
+
+        return $this;
+    }
+
+    /**
      * Adds request data
      *
      * @param   string  $key         Sets new data entry key. IMPORTANT existing key will be overwritten
