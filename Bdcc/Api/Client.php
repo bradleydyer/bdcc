@@ -407,7 +407,7 @@ class Client
                             } elseif (isset($error->message)){
                                 $message = $error->message;
                             } else {
-                                $message = 'Unkown client or server side error.'
+                                $message = 'Unkown client or server side error.';
                             }
 
                             throw new Bdcc_Exception($message, $httpCode);
