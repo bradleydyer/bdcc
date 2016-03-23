@@ -30,6 +30,11 @@ class Client
     private $requestData;
 
     /**
+     * @var array
+     */
+    private $requestRawData;
+
+    /**
      * @var mixed
      */
     private $responseData;
@@ -196,6 +201,40 @@ class Client
     }
 
     /**
+     * Sets request raw data
+     *
+     * @param   mixed  $data       Sets data sent by the client
+     */
+    public function setRequestRawData($data)
+    {
+        $this->requestRawData = $data;
+
+        return $this;
+    }
+
+    /**
+     * Gets request raw data
+     *
+     * @return  mixed
+     */
+    public function getRequestRawData()
+    {
+        return $this->requestRawData;
+    }
+
+    /**
+     * Clear request raw data
+     *
+     * @return  Client
+     */
+    public function clearRequestRawData()
+    {
+        $this->requestRawData = null;
+
+        return $this;
+    }
+
+    /**
      * Sets parsers
      * THIS WILL OVERWRITE ANY DEFAULT OR EXISTING PARSERS WITH FOR A GIVEN CONTENT TYPE
      *
@@ -342,18 +381,28 @@ class Client
     /**
      * Send request
      */
-    public function sendRequest($route, array $data = array(), $method = 'GET')
+    public function sendRequest($route, $data = array(), $method = 'GET')
     {
         $ret = false;
 
         // Set up the route, data and HTTP method
 
+        if (is_array($data)) {
+            $this
+                ->setRequestData($data)
+                ->getHttpClient()
+                    ->setRequestData($this->getRequestData());
+        } else {
+            $this
+                ->setRequestRawData($data)
+                ->getHttpClient()
+                    ->setRequestData($data);
+        }
+
         $this
-            ->setRequestData($data)
             ->getHttpClient()
                 ->setRequestUri($this->getBaseUrl() . $route)
                 ->setRequestMethod($method)
-                ->setRequestData($this->getRequestData())
                 ->sendRequest();
 
         // Send request
