@@ -5,6 +5,7 @@ namespace Bdcc\Api;
 use Bdcc\Exception as Bdcc_Exception;
 use Bdcc\Status as Bdcc_Status;
 use Bdcc\Http\Client as Bdcc_Http_Client;
+use Bdcc\ParserInterface;
 
 /**
  * Bdcc_Api_Client Class
@@ -43,6 +44,11 @@ class Client
      * @var array
      */
     private $parsers;
+
+    /**
+     * @var mixed
+     */
+    private $errorParser;
 
     /**
      * @var array
@@ -451,15 +457,20 @@ class Client
                         if (Bdcc_Status::isServerError($httpCode) || Bdcc_Status::isClientError($httpCode)) {
                             $error = $ret;
                             // Find error message
-                            if (isset($error->Message)) {
-                                $message = $error->Message;
-                            } elseif (isset($error->message)){
-                                $message = $error->message;
+                            // Try parsing error using custom error parser
+                            if ($this->getErrorParser()) {
+                                $this->getErrorParser()->parse($error);
                             } else {
-                                $message = 'Unkown client or server side error.';
-                            }
+                                if (isset($error->Message)) {
+                                    $message = $error->Message;
+                                } elseif (isset($error->message)){
+                                    $message = $error->message;
+                                } else {
+                                    $message = 'Unkown client or server side error.';
+                                }
 
-                            throw new Bdcc_Exception($message, $httpCode);
+                                throw new Bdcc_Exception($message, $httpCode);
+                            }
                         }
                     } else {
                         // save response data
@@ -480,5 +491,28 @@ class Client
         $this->setResponseData($ret);
 
         return $ret;
+    }
+
+    /**
+     * Get ErrorParser
+     *
+     * @return ParserInterface
+     */
+    public function getErrorParser()
+    {
+        return $this->errorParser;
+    }
+
+    /**
+     * Set ErrorParser
+     *
+     * @param   ParserInterface     $errorParser
+     * @return  Client
+     */
+    public function setErrorParser(ParserInterface $errorParser)
+    {
+        $this->errorParser = $errorParser;
+
+        return $this;
     }
 }
