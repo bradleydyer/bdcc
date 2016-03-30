@@ -392,6 +392,9 @@ class Client
         $ret = false;
 
         // Set up the route, data and HTTP method
+        $this
+            ->getHttpClient()
+                ->setRequestUri($this->getBaseUrl() . $route);
 
         if (is_array($data)) {
             $this
@@ -407,7 +410,6 @@ class Client
 
         $this
             ->getHttpClient()
-                ->setRequestUri($this->getBaseUrl() . $route)
                 ->setRequestMethod($method)
                 ->sendRequest();
 
