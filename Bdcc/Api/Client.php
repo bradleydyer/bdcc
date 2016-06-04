@@ -11,7 +11,9 @@ use Bdcc\ParserInterface;
  * Bdcc_Api_Client Class
  *
  * Provides methods to communicate with api
- * @author Kris Rybak kris.rybak@bradleydyer.com
+ *
+ * @author Kris Rybak <kris.rybak@bradleydyer.com>
+ * @author Anton McCook <anton.mccook@bradleydyer.com>
  */
 class Client
 {
@@ -60,6 +62,7 @@ class Client
      */
     public static $validChecks = array(
         'isResponseComplete',
+        'isOperationTimeouted',
     );
 
     /**
@@ -77,6 +80,9 @@ class Client
         $this->requestData = array();
         $this->disabledChecks = array();
         $this->autoParse = true;
+
+        // Disable the response timeout exception check (backwards compatibility)
+        $this->addDisabledCheck('isOperationTimeouted');
     }
 
     /**
@@ -415,6 +421,19 @@ class Client
 
         // Send request
         if ($this->getHttpClient()) {
+            $isOperationTimeouted = $this->getHttpClient()->isOperationTimeouted();
+
+            // Check if the response complete check is disabled
+            if(in_array('isOperationTimeouted', $this->disabledChecks)) {
+                // Override the complete response variable to true
+                $isOperationTimeouted = false;
+            }
+
+            if($isOperationTimeouted) {
+                // Throw exception with 504 Gateway Timeout
+                throw new Bdcc_Exception('Operation timed out', 504);
+            }
+
             // Get wether the response is complete
             $isResponseComplete = $this->getHttpClient()->isResponseComplete();
 
