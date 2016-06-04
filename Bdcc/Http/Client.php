@@ -985,7 +985,7 @@ class Client
 
     public function isOperationTimeouted()
     {
-        if ($this->curlErrno == CURLE_OPERATION_TIMEOUTED) {
+        if ($this->curlErrno === CURLE_OPERATION_TIMEOUTED) {
             return true;
         }
 

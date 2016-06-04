@@ -421,14 +421,17 @@ class Client
 
         // Send request
         if ($this->getHttpClient()) {
+            // Get the real result for if the operation has timedout
             $isOperationTimeouted = $this->getHttpClient()->isOperationTimeouted();
 
-            // Check if the response complete check is disabled
+            // Check if the operation timeout check is disabled
             if(in_array('isOperationTimeouted', $this->disabledChecks)) {
-                // Override the complete response variable to true
+                // Override the operation timeouted variable to false
+                // to stop an exception been thrown
                 $isOperationTimeouted = false;
             }
 
+            // If the operation has timed out throw an exception
             if($isOperationTimeouted) {
                 // Throw exception with 504 Gateway Timeout
                 throw new Bdcc_Exception('Operation timed out', 504);
