@@ -8,7 +8,9 @@ use Bdcc\Exception as BdccException;
  * Bdcc_Http_Client Class
  *
  * Provides methods to communicate with HTTP servers
- * @author Kris Rybak kris.rybak@bradleydyer.com
+ *
+ * @author Kris Rybak <kris.rybak@bradleydyer.com>
+ * @author Anton McCook <anton.mccook@bradleydyer.com>
  */
 class Client
 {
@@ -975,6 +977,15 @@ class Client
     public static function isSafeMethod($method)
     {
         if (in_array($method, array('GET', 'HEAD', 'OPTIONS', 'TRACE'))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isOperationTimeouted()
+    {
+        if ($this->curlErrno === CURLE_OPERATION_TIMEOUTED) {
             return true;
         }
 
