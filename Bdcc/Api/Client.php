@@ -360,7 +360,9 @@ class Client
      */
     public function removeDisabledCheck($check)
     {
-        if ($key = array_search($check, $this->disabledChecks) !== false) {
+        $key = array_search($check, $this->disabledChecks);
+
+        if ($key !== false) {
             unset($this->disabledChecks[$key]);
         }
 
