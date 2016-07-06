@@ -395,7 +395,7 @@ class Client
     /**
      * Send request
      */
-    public function sendRequest($route, $data = array(), $method = 'GET')
+    public function sendRequest($route, $data = array(), $method = 'GET', $cvPostFix = false)
     {
         $ret = false;
 
@@ -418,7 +418,17 @@ class Client
 
         $this
             ->getHttpClient()
-                ->setRequestMethod($method)
+                ->setRequestMethod($method);
+
+        if ($cvPostFix) {
+            // Re-Set up the route
+            $this
+                ->getHttpClient()
+                    ->setRequestUri($this->getBaseUrl() . $route);
+        }
+
+        $this
+            ->getHttpClient()
                 ->sendRequest();
 
         // Send request
