@@ -71,6 +71,11 @@ class Client
     private $autoParse;
 
     /**
+     * @var array
+     */
+    private $beforeSendRequestCallbacks;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -80,6 +85,7 @@ class Client
         $this->requestData = array();
         $this->disabledChecks = array();
         $this->autoParse = true;
+        $this->beforeSendRequestCallbacks = array();
 
         // Disable the response timeout exception check (backwards compatibility)
         $this->addDisabledCheck('isOperationTimeouted');
