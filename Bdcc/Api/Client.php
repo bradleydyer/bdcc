@@ -416,9 +416,14 @@ class Client
                     ->setRequestData($data);
         }
 
+        // Set method
         $this
             ->getHttpClient()
-                ->setRequestMethod($method)
+                ->setRequestMethod($method);
+
+        // Send request
+        $this
+            ->getHttpClient()
                 ->sendRequest();
 
         // Send request
