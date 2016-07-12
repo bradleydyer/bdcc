@@ -433,7 +433,7 @@ class Client
     public function addBeforeSendRequestCallback($callback, $arguments = array())
     {
         if (!is_callable($callback)) {
-            throw new Bdcc_Exception("Callback needs to be a callable.", Bdcc_Status::HTTP_BAD_REQUEST);
+            throw new Bdcc_Exception("Callback needs to be a callable.", Bdcc_Status::HTTP_PRECONDITION_FAILED);
         }
 
         // Create callback object that encapsulates callable and arguments
