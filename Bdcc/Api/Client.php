@@ -436,7 +436,7 @@ class Client
             // If the operation has timed out throw an exception
             if($isOperationTimeouted) {
                 // Throw exception with 504 Gateway Timeout
-                throw new Bdcc_Exception('Operation timed out', 504);
+                throw new Bdcc_Exception('Operation timed out', Bdcc_Status::HTTP_GATEWAY_TIMEOUT);
             }
 
             // Get wether the response is complete
