@@ -71,6 +71,11 @@ class Client
     private $autoParse;
 
     /**
+     * @var array
+     */
+    private $beforeSendRequestCallbacks;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -80,6 +85,7 @@ class Client
         $this->requestData = array();
         $this->disabledChecks = array();
         $this->autoParse = true;
+        $this->beforeSendRequestCallbacks = array();
 
         // Disable the response timeout exception check (backwards compatibility)
         $this->addDisabledCheck('isOperationTimeouted');
@@ -393,6 +399,55 @@ class Client
     }
 
     /**
+     * Get before Send Request callbacks
+     *
+     * @return  array
+     */
+    public function getBeforeSendRequestCallbacks()
+    {
+        return $this->beforeSendRequestCallbacks;
+    }
+
+    /**
+     * Set before Send Request callback.
+     * Forward to / Alias of addBeforeSendRequestCallback
+     *
+     * @param   callable    $callback
+     * @param   array       $arguments
+     * @return  Client
+     */
+    public function setBeforeSendRequestCallback($callback, $arguments = array())
+    {
+        $this->addBeforeSendRequestCallback($callback, $arguments);
+
+        return $this;
+    }
+
+    /**
+     * Add before Send Request callback.
+     *
+     * @param   callable    $callback
+     * @param   array       $arguments
+     * @return  Client
+     */
+    public function addBeforeSendRequestCallback($callback, $arguments = array())
+    {
+        if (!is_callable($callback)) {
+            throw new Bdcc_Exception("Callback needs to be a callable.", Bdcc_Status::HTTP_PRECONDITION_FAILED);
+        }
+
+        // Create callback object that encapsulates callable and arguments
+        $object = new \StdClass;
+        $object->callable   = $callback;
+        $object->arguments  = $arguments;
+
+        // Add callback to array of callbacks
+        $this->beforeSendRequestCallbacks[] = $object;
+
+        return $this;
+    }
+
+    /**
      * Send request
      */
     public function sendRequest($route, $data = array(), $method = 'GET')
@@ -416,12 +471,22 @@ class Client
                     ->setRequestData($data);
         }
 
+        // Set method
         $this
             ->getHttpClient()
-                ->setRequestMethod($method)
-                ->sendRequest();
+                ->setRequestMethod($method);
+
+        foreach ($this->beforeSendRequestCallbacks as $callback) {
+            // Invoke callback and pass arguments as well as client itself
+            call_user_func_array($callback->callable, array($callback->arguments, $this));
+        }
 
         // Send request
+        $this
+            ->getHttpClient()
+                ->sendRequest();
+
+        // Process request result
         if ($this->getHttpClient()) {
             // Get the real result for if the operation has timedout
             $isOperationTimeouted = $this->getHttpClient()->isOperationTimeouted();
@@ -436,10 +501,10 @@ class Client
             // If the operation has timed out throw an exception
             if($isOperationTimeouted) {
                 // Throw exception with 504 Gateway Timeout
-                throw new Bdcc_Exception('Operation timed out', 504);
+                throw new Bdcc_Exception('Operation timed out', Bdcc_Status::HTTP_GATEWAY_TIMEOUT);
             }
 
-            // Get wether the response is complete
+            // Get whether the response is complete
             $isResponseComplete = $this->getHttpClient()->isResponseComplete();
 
             // Check if the response complete check is disabled
@@ -470,7 +535,7 @@ class Client
 
                 $data = '';
 
-                // Read handle untill end of file
+                // Read handle until end of file
                 while(!feof($handle)) {
                     $data .= fgets($handle);
                 }
