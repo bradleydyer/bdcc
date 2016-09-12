@@ -550,7 +550,7 @@ class Client
                             // Find error message
                             // Try parsing error using custom error parser
                             if ($this->getErrorParser()) {
-                                $this->getErrorParser()->parse($error, $this);
+                                $this->getErrorParser()->parse(array('error' => $error, 'client' => $this));
                             } else {
                                 if (isset($error->Message)) {
                                     $message = $error->Message;
@@ -587,7 +587,7 @@ class Client
     /**
      * Get ErrorParser
      *
-     * @return mixed
+     * @return ParserInterface
      */
     public function getErrorParser()
     {
@@ -597,10 +597,10 @@ class Client
     /**
      * Set ErrorParser
      *
-     * @param   $errorParser
+     * @param   ParserInterface $errorParser
      * @return  Client
      */
-    public function setErrorParser($errorParser)
+    public function setErrorParser(ParserInterface $errorParser)
     {
         $this->errorParser = $errorParser;
 
