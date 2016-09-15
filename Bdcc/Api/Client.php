@@ -448,6 +448,18 @@ class Client
     }
 
     /**
+     * Clears beforeSendRequestCallbacks
+     *
+     * @return  Client
+     */
+    public function clearBeforeSendRequestCallbacks()
+    {
+        $this->beforeSendRequestCallbacks = array();
+
+        return $this;
+    }
+
+    /**
      * Send request
      */
     public function sendRequest($route, $data = array(), $method = 'GET')
