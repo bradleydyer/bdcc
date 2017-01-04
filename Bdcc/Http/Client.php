@@ -136,6 +136,13 @@ class Client
     private $requestHeaders;
 
     /**
+     * @var boolean
+     *
+     * Whether to verify SSL connection or not
+     */
+    private $verifySSL;
+
+    /**
      * @var array
      *
      * List of available HTTP methods
@@ -168,6 +175,7 @@ class Client
         $this->proxy                = FALSE;
         $this->proxyPort            = FALSE;
         $this->requestHeaders       = array();
+        $this->verifySSL            = TRUE;
 
         $this->setFollowRedirects();
         $this->resetRequest();
@@ -655,6 +663,27 @@ class Client
     }
 
     /**
+     * Sets verifySSL
+     *
+     * @param   boolean      $verifySSL
+     * @return  Client
+     */
+    public function setVerifySSL($verifySSL)
+    {
+        $this->verifySSL = $verifySSL;
+    }
+
+    /**
+     * Gets verifySSL
+     *
+     * @return string
+     */
+    public function getVerifySSL()
+    {
+        return $this->verifySSL;
+    }
+
+    /**
      * This method retrieves a header after a request has been made
      *
      * @param string $index The index of the response header you want
@@ -901,6 +930,11 @@ class Client
 
         // Set headers for request
         curl_setopt($this->ch, CURLOPT_HTTPHEADER, $this->getCurlHeaders());
+
+        // Check if we should verify SSL connection
+        if (!$this->verifySSL) {
+            curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
+        }
 
         return $this;
     }
